@@ -8,7 +8,8 @@ pub fn BevyCanvas(
     /// This function is be called to initialize and return the Bevy app.
     init: impl FnOnce() -> App + 'static,
     /// Optional canvas id. Defaults to `bevy_canvas`.
-    #[prop(into, default = "bevy_canvas".to_string())] canvas_id: String,
+    #[prop(into, default = "bevy_canvas".to_string())]
+    canvas_id: String,
 ) -> impl IntoView {
     request_animation_frame(move || {
         let mut app = init();
