@@ -9,6 +9,8 @@ use std::panic::Location;
 
 pub use self::traits::*;
 
+/// This is a Leptos event sender that can be used to send events to Bevy.
+/// It provides a `send` method to do this.
 #[derive(Copy)]
 pub struct LeptosEventSender<E>
 where
@@ -48,6 +50,8 @@ where
     }
 }
 
+/// This is a Leptos event receiver that can be used to receive events from Bevy.
+/// This can be used just like a normal Leptos `Signal` to read the latest event.
 #[derive(Copy)]
 pub struct LeptosEventReceiver<E>
 where
@@ -84,6 +88,7 @@ where
     }
 }
 
+/// Combines the functionality of `LeptosEventSender` and `LeptosEventReceiver`.
 #[derive(Copy)]
 pub struct LeptosEventDuplex<E>
 where

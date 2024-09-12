@@ -11,6 +11,7 @@ pub struct ImportLeptosEventSet;
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub struct ExportLeptosEventSet;
 
+/// Keeps track of what Leptos event have been imported into Bevy to prevent infinite loops.
 #[derive(Resource, Deref, DerefMut)]
 pub struct ImportedEventIds<E: Event>(Vec<EventId<E>>);
 
@@ -20,6 +21,7 @@ impl<E: Event> Default for ImportedEventIds<E> {
     }
 }
 
+/// Imports an event from Leptos and writes it as a Bevy event.
 pub fn import_and_send_leptos_events<R, E>(
     rx: Res<R>,
     mut imported_event_ids: ResMut<ImportedEventIds<E>>,
@@ -36,6 +38,7 @@ pub fn import_and_send_leptos_events<R, E>(
     }
 }
 
+/// Exports an event from Bevy to Leptos.
 pub fn read_and_export_leptos_events<S, E>(
     tx: Res<S>,
     imported_event_ids: Res<ImportedEventIds<E>>,
@@ -51,6 +54,7 @@ pub fn read_and_export_leptos_events<S, E>(
     }
 }
 
+/// Takes care of synchronizing a resource between Bevy and a Leptos signal
 pub fn sync_signal_resource<D, R>(mut resource: ResMut<R>, sync: Res<D>)
 where
     R: Resource + Clone,
