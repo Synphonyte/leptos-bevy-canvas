@@ -6,6 +6,7 @@ pub use crate::events::leptos::*;
 use crate::utils::init_rw_signal_from_receiver;
 
 /// Creates a pair of a `LeptosEventSender` and a `BevyEventReceiver`.
+///
 /// The `LeptosEventSender` can be used in the Leptos app to send events to Bevy.
 /// The `BevyEventReceiver` has to be passed to the Bevy app to receive these events in the form
 /// of normal Bevy events.
@@ -19,6 +20,7 @@ where
 }
 
 /// Creates a pair of a `LeptosEventReceiver` and a `BevyEventSender`.
+///
 /// The `LeptosEventReceiver` can be used in the Leptos app like a normal `Signal` to read the
 /// latest event that was received from Bevy.
 /// The `BevyEventSender` has to be passed to the Bevy app so whenever you write the specified

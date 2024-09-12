@@ -99,9 +99,10 @@ where
     }
 }
 
-/// Creates a pair of a `RwSignalResource` and a `BevyEventDuplex`. The first can be used just
-/// like a `RwSignal` in Leptos. The `BevyEventDuplex` that has to be passed into the Bevy app
-/// where it will be used to sync the signal with a Bevy `Resource`.
+/// Creates a pair of a `RwSignalResource` and a `BevyEventDuplex`.
+///
+/// The first can be used just like a `RwSignal` in Leptos. The `BevyEventDuplex` that has to
+/// be passed into the Bevy app where it will be used to sync the signal with a Bevy `Resource`.
 pub fn signal_resource<T>(initial_value: T) -> (RwSignalResource<T>, BevyEventDuplex<T>)
 where
     T: Send + Sync + Clone + 'static,
