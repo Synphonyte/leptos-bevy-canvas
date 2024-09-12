@@ -1,4 +1,4 @@
-# Leptos Struct Table
+# Leptos Bevy Canvas
 
 [![Crates.io](https://img.shields.io/crates/v/leptos-bevy-canvas.svg)](https://crates.io/crates/leptos-bevy-canvas)
 [![Docs](https://docs.rs/leptos-bevy-canvas/badge.svg)](https://docs.rs/leptos-bevy-canvas/)
@@ -32,12 +32,15 @@ pub struct TextEvent {
 
 #[component]
 pub fn App() -> impl IntoView {
-    // This initializes a sender for the Leptos app and a receiver for the Bevy app
+    // This initializes a sender for the Leptos app and
+    // a receiver for the Bevy app
     let (text_event_sender, bevy_text_receiver) = event_l2b::<TextEvent>();
 
     let on_input = move |evt| {
         // send the event over to Bevy
-        text_event_sender.send(TextEvent { text: event_target_value(&evt) }).ok();
+        text_event_sender
+            .send(TextEvent { text: event_target_value(&evt) })
+            .ok();
     };
 
     view! {
