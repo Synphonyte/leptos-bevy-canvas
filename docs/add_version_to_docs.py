@@ -10,7 +10,7 @@ def main():
         m = re.search(r'leptos = "(\d+)\.(\d+)', cargo_text)
         leptos_version = f"{m.group(1)}.{m.group(2)}"
 
-        m = re.search(r'bevy = "(\d+)\.(\d+)', cargo_text)
+        m = re.search(r'bevy = \{ version = "(\d+)\.(\d+)', cargo_text)
         bevy_version = f"{m.group(1)}.{m.group(2)}"
 
         m = re.search(r'version = "(\d+)\.(\d+)\.(\d+)', cargo_text)

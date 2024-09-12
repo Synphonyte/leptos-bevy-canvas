@@ -4,7 +4,7 @@ version = "0.1.0-alpha"
 edition = "2021"
 
 [dependencies]
-bevy = "0.14"
+bevy = { version = "0.14", default-features = false }
 crossbeam-channel = "0.5"
 leptos = "0.7.0-beta"
 leptos-use = "0.14.0-beta"
