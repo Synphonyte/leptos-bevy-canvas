@@ -8,7 +8,7 @@
 
 <!-- cargo-rdme start -->
 
-Easily embed an idiomatic Bevy app inside your Leptos app.
+Embed an idiomatic Bevy app inside your Leptos app with ease.
 
 ## Features
 
@@ -97,4 +97,4 @@ fn init_bevy_app( text_receiver: BevyEventReceiver<TextEvent>) -> App {
 
 | Crate version | Compatible Leptos version | Compatible Bevy version |
 |---------------|---------------------------|-------------------------|
-| 0.1           | 0.7                       | 0.14                    |
+| 0.1           | 0.7                       | 0.15                    |
