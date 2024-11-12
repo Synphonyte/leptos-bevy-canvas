@@ -1,12 +1,8 @@
-use crate::bevy::events::{ImageEvent, RingEvent, TextEvent, TextEventType};
-use crate::bevy::init_bevy_app;
-use crate::constants::{RENDER_HEIGHT, RENDER_WIDTH};
-use crate::leptos::canvas::{img_to_bytes, provide_canvas, CanvasContext};
-use leptos::html::Object;
+use crate::bevy_app::init_bevy_app;
+use crate::events::TextEvent;
+use crate::{RENDER_HEIGHT, RENDER_WIDTH};
 use leptos::prelude::*;
 use leptos_bevy_canvas::prelude::*;
-use std::time::Duration;
-use uuid::Uuid;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -21,9 +17,8 @@ pub fn App() -> impl IntoView {
             style:max-height=format!("{}px", RENDER_HEIGHT)
         >
             <BevyCanvas
-                init=move || { init_bevy_app(img_receiver, text_receiver, ring_receiver) }
+                init=move || { init_bevy_app(text_receiver) }
                 {..}
-                // class="pointer-events-none outline-none"
                 width=canvas_width
                 height=RENDER_HEIGHT
             />

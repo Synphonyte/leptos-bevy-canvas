@@ -4,36 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { version = "0.14", default-features = false, features = ["bevy_text", "bevy_sprite", "webgl2", "bevy_pbr"] }
-leptos-bevy-canvas = { path = "../../leptos-bevy-canvas" }
-console_error_panic_hook = "0.1"
-console_log = "1"
-leptos = { version = "0.7.0-beta", features = ["csr"] }
-log = "0.4"
-parry2d = "0.17"
-rmp-serde = "1.3"
-send_wrapper = "0.6"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-stl_io = "0.8"
-tailwind_fuse = "0.3"
-thiserror = "1.0.63"
-uuid = { version = "1", features = ["v4"] }
-
-[dependencies.web-sys]
-version = "0.3"
-features = [
-    "CanvasRenderingContext2d",
-    "HtmlCanvasElement",
-    "ImageData",
-    "SvgAnimatedRect",
-    "SvgRect",
-    "SvgsvgElement",
-    "console",
-]
-
-[profile.dev]
-opt-level = 1
-
-[profile.dev.package."*"]
-opt-level = 3
+bevy = { workspace = true, features = ["webgl2", "bevy_pbr", "bevy_picking"] }
+console_error_panic_hook.workspace = true
+leptos.workspace = true
+leptos-bevy-canvas.workspace = true
+leptos-bevy-canvas-examples.workspace = true
+meshtext = "0.3.1"
