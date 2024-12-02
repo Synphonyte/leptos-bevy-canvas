@@ -6,9 +6,9 @@ members = [
 ]
 
 [workspace.dependencies]
-bevy = { version = "0.15.0-rc.3", default-features = false }
+bevy = { version = "0.15.0", default-features = false }
 console_error_panic_hook = "0.1"
-leptos = { version = "0.7.0-rc1", features = ["csr"] }
+leptos = { version = "0.7.0", features = ["csr"] }
 leptos-bevy-canvas = { path = "../../leptos-bevy-canvas" }
 leptos-bevy-canvas-examples = { path = "." }
 web-sys = "0.3"

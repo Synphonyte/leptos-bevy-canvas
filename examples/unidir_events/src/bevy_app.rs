@@ -1,6 +1,6 @@
 use crate::events::TextEvent;
 use crate::{RENDER_HEIGHT, RENDER_WIDTH};
-use bevy::asset::RenderAssetUsages;
+use bevy::asset::{AssetMetaCheck, RenderAssetUsages};
 use bevy::prelude::*;
 use bevy::render::render_resource::PrimitiveTopology;
 use bevy::window::WindowResolution;
@@ -12,16 +12,21 @@ use meshtext::{MeshGenerator, MeshText, TextSection};
 pub fn init_bevy_app(text_receiver: BevyEventReceiver<TextEvent>) -> App {
     let mut app = App::new();
     app.add_plugins((
-        DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                focused: false,
-                fit_canvas_to_parent: true,
-                canvas: Some("#bevy_canvas".into()),
-                resolution: WindowResolution::new(RENDER_WIDTH, RENDER_HEIGHT),
+        DefaultPlugins
+            .set(AssetPlugin {
+                meta_check: AssetMetaCheck::Never,
+                ..default()
+            })
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    focused: false,
+                    fit_canvas_to_parent: true,
+                    canvas: Some("#bevy_canvas".into()),
+                    resolution: WindowResolution::new(RENDER_WIDTH, RENDER_HEIGHT),
+                    ..default()
+                }),
                 ..default()
             }),
-            ..default()
-        }),
         // bevy_inspector_egui::quick::WorldInspectorPlugin::new(),
     ))
     .import_event_from_leptos(text_receiver)

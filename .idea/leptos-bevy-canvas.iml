@@ -11,6 +11,7 @@
       <sourceFolder url="file://$MODULE_DIR$/examples/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples/unidir_events/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples/testbevy/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/examples/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
