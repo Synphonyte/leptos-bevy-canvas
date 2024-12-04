@@ -1,6 +1,6 @@
 [package]
 name = "leptos-bevy-canvas"
-version = "0.1.0-rc0"
+version = "0.1.0"
 edition = "2021"
 authors = ["Marc-Stefan Cassola"]
 categories = ["gui", "web-programming", "rendering", "graphics", "wasm"]
@@ -15,4 +15,7 @@ repository = "https://github.com/Synphonyte/leptos-bevy-canvas"
 bevy = { version = "0.15.0", default-features = false }
 crossbeam-channel = "0.5"
 leptos = "0.7.0"
-leptos-use = "0.14.0"
+leptos-use = { version = "0.14.0", default-features = false, features = ["use_raf_fn"] }
+
+[dev-dependencies]
+bevy = { version = "0.15.0", default-features = false, features = ["bevy_window"] }

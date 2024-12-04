@@ -1,6 +1,6 @@
-mod leptos_app;
 mod bevy_app;
 mod events;
+mod leptos_app;
 
 use crate::leptos_app::App;
 use leptos::prelude::mount_to_body;

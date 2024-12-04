@@ -1,3 +1,1 @@
-pub fn camera_from_mouse() {
-    
-}
+pub fn camera_from_mouse() {}
