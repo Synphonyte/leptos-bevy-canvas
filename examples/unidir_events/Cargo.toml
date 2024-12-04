@@ -4,9 +4,21 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { workspace = true, features = ["webgl2", "bevy_pbr", "bevy_picking", "bevy_window", "bevy_winit", "tonemapping_luts"] }
 console_error_panic_hook.workspace = true
 leptos.workspace = true
 leptos-bevy-canvas.workspace = true
 leptos-bevy-canvas-examples.workspace = true
+leptos-use.workspace = true
 meshtext = "0.3.1"
+
+[dependencies.bevy]
+workspace = true
+features = [
+    "bevy_mesh_picking_backend",
+    "bevy_pbr",
+    "bevy_picking",
+    "bevy_window",
+    "bevy_winit",
+    "tonemapping_luts",
+    "webgl2"
+]
