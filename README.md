@@ -6,7 +6,7 @@
 [![Build Status](https://github.com/synphonyte/leptos-bevy-canvas/actions/workflows/ci.yml/badge.svg)](https://github.com/synphonyte/leptos-bevy-canvas/actions/workflows/ci.yml)
 [![built with Codeium](https://codeium.com/badges/main)](https://codeium.com)
 
-![Demo.webp](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/demo.web)
+![Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/demo.gif)
 
 <!-- cargo-rdme start -->
 
