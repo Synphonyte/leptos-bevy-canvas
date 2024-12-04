@@ -6,7 +6,8 @@
 [![Build Status](https://github.com/synphonyte/leptos-bevy-canvas/actions/workflows/ci.yml/badge.svg)](https://github.com/synphonyte/leptos-bevy-canvas/actions/workflows/ci.yml)
 [![built with Codeium](https://codeium.com/badges/main)](https://codeium.com)
 
-<video src="https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/Screen%20Recording%202024-12-03%20at%2022.05.35.webm"></video>
+[Demo.webm](https://github.com/user-attachments/assets/4739dc5e-9852-4675-b530-c228ac2f422b)
+
 
 <!-- cargo-rdme start -->
 
