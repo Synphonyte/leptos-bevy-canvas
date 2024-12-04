@@ -10,11 +10,12 @@
 
 <!-- cargo-rdme start -->
 
-Embed an idiomatic Bevy app inside your Leptos app with ease.
+Embed an idiomatic Bevy app inside your Leptos app.
 
 ## Features
 
-- **Easy to use** - Simply embed your Bevy app inside your Leptos app with the `<BevyCanvas>` component.
+- **Easy to use** - Simply embed your Bevy app inside your Leptos app with the
+  [`BevyCanvas`](fn@crate::prelude::BevyCanvas) component.
 - **Idiomatic** - This crate doesn't want you to do anything differently in the way you write
   your Bevy app or your Leptos app. It just gives you the tools for them to communicate.
 - **Events** - Send events in either or both directions between your Bevy app and your Leptos app.
