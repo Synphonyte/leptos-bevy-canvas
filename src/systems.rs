@@ -60,7 +60,7 @@ where
     R: Resource + Clone,
     D: HasReceiver<R> + HasSender<R> + Resource,
 {
-    if resource.is_changed() {
+    if resource.is_changed() && !resource.is_added() {
         sync.tx().send(resource.clone()).unwrap();
     }
 

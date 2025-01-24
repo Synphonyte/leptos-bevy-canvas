@@ -3,15 +3,23 @@ use crossbeam_channel::Sender;
 use leptos::prelude::guards::{Plain, ReadGuard};
 use leptos::prelude::*;
 use leptos_use::use_raf_fn;
+use std::ops::DerefMut;
 use std::panic::Location;
 
 /// This is basically identical to a Leptos `RwSignal` but is automatically synced with a Bevy
 /// `Resource`.
-#[derive(Copy, Clone)]
 pub struct RwSignalResource<T> {
     rw_signal: RwSignal<T>,
     tx: StoredValue<Sender<T>>,
 }
+
+impl<T> Clone for RwSignalResource<T> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl<T> Copy for RwSignalResource<T> {}
 
 impl<T> DefinedAt for RwSignalResource<T> {
     fn defined_at(&self) -> Option<&'static Location<'static>> {
@@ -58,47 +66,39 @@ where
     }
 }
 
-impl<T> UpdateUntracked for RwSignalResource<T>
+impl<T> Write for RwSignalResource<T>
 where
     T: Send + Clone + 'static,
-    RwSignal<T>: UpdateUntracked<Value = T>,
+    RwSignal<T>: Write<Value = T> + GetUntracked<Value = T>,
 {
     type Value = T;
 
-    #[track_caller]
-    fn try_update_untracked<U>(&self, fun: impl FnOnce(&mut Self::Value) -> U) -> Option<U> {
-        let (ret, val) = self.rw_signal.try_update_untracked(|val| {
-            let ret = fun(val);
-            (ret, val.clone())
-        })?;
+    fn try_write(&self) -> Option<impl UntrackableGuard<Target = Self::Value>> {
+        let inner_guard = self.rw_signal.try_write()?;
 
-        self.tx
-            .with_value(|tx| tx.send(val).expect("Could not send value"));
+        request_animation_frame({
+            let rw_signal = self.rw_signal;
+            let tx = self.tx;
 
-        Some(ret)
+            move || {
+                tx.with_value(|tx| {
+                    tx.send(rw_signal.get_untracked())
+                        .expect("Could not send value")
+                });
+            }
+        });
+
+        Some(inner_guard)
+    }
+
+    fn try_write_untracked(&self) -> Option<impl DerefMut<Target = Self::Value>> {
+        let mut guard = self.try_write()?;
+        guard.untrack();
+        Some(guard)
     }
 }
 
-impl<T> Update for RwSignalResource<T>
-where
-    T: Send + Clone + 'static,
-    RwSignal<T>: Update<Value = T>,
-{
-    type Value = T;
-
-    fn try_maybe_update<U>(&self, fun: impl FnOnce(&mut Self::Value) -> (bool, U)) -> Option<U> {
-        let (ret, val) = self.rw_signal.try_maybe_update(|val| {
-            let (notify, ret) = fun(val);
-            (notify, (ret, val.clone()))
-        })?;
-
-        self.tx
-            .with_value(|tx| tx.send(val).expect("Could not send value"));
-
-        Some(ret)
-    }
-}
-
+// TODO : make sync_resource out of this with an `Into<UseRwSignal>` as input.
 /// Creates a pair of a `RwSignalResource` and a `BevyEventDuplex`.
 ///
 /// The first can be used just like a `RwSignal` in Leptos. The `BevyEventDuplex` that has to

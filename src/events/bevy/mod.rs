@@ -12,6 +12,22 @@ pub struct BevyEventReceiver<E> {
     rx: Receiver<E>,
 }
 
+impl<E> Clone for BevyEventReceiver<E> {
+    fn clone(&self) -> Self {
+        Self {
+            rx: self.rx.clone(),
+        }
+    }
+}
+
+impl<E> std::fmt::Debug for BevyEventReceiver<E> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut s = f.debug_struct("BevyEventReceiver");
+        s.field("rx", &self.rx);
+        s.finish()
+    }
+}
+
 impl<E> BevyEventReceiver<E> {
     #[inline]
     pub fn new(rx: Receiver<E>) -> Self {
@@ -25,6 +41,22 @@ impl_has_receiver!(BevyEventReceiver);
 #[derive(Resource)]
 pub struct BevyEventSender<E> {
     tx: Sender<E>,
+}
+
+impl<E> Clone for BevyEventSender<E> {
+    fn clone(&self) -> Self {
+        Self {
+            tx: self.tx.clone(),
+        }
+    }
+}
+
+impl<E> std::fmt::Debug for BevyEventSender<E> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut s = f.debug_struct("BevyEventSender");
+        s.field("tx", &self.tx);
+        s.finish()
+    }
 }
 
 impl<E> BevyEventSender<E> {
@@ -41,6 +73,24 @@ impl_has_sender!(BevyEventSender);
 pub struct BevyEventDuplex<E> {
     tx: Sender<E>,
     rx: Receiver<E>,
+}
+
+impl<E> Clone for BevyEventDuplex<E> {
+    fn clone(&self) -> Self {
+        Self {
+            tx: self.tx.clone(),
+            rx: self.rx.clone(),
+        }
+    }
+}
+
+impl<E> std::fmt::Debug for BevyEventDuplex<E> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut s = f.debug_struct("BevyEventDuplex");
+        s.field("tx", &self.tx);
+        s.field("rx", &self.rx);
+        s.finish()
+    }
 }
 
 impl<E> BevyEventDuplex<E> {
