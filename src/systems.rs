@@ -1,5 +1,8 @@
+use crate::events::BevyEventDuplex;
+use crate::prelude::{CloneItem, SetItem};
 use crate::traits::{HasReceiver, HasSender};
 use bevy::ecs::event::EventId;
+use bevy::ecs::query::{QueryData, QueryFilter, WorldQuery};
 use bevy::prelude::*;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
@@ -10,6 +13,9 @@ pub struct ImportLeptosEventSet;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub struct ExportLeptosEventSet;
+
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
+pub struct SyncQuerySet;
 
 /// Keeps track of what Leptos event have been imported into Bevy to prevent infinite loops.
 #[derive(Resource, Deref, DerefMut)]
@@ -66,5 +72,39 @@ where
 
     for event in sync.rx().try_iter() {
         *resource = event;
+    }
+}
+
+/// Synchronizes a Bevy query's `.get_single_mut()` with a Leptos signal.
+pub fn sync_query<D, F, CI>(
+    duplex: Res<BevyEventDuplex<Option<CI>>>,
+    mut query: Query<D, F>,
+    mut prev_some: Local<bool>,
+) where
+    D: QueryData,
+    for<'i> D::Item<'i>: CloneItem<Output = CI> + DetectChanges,
+    F: QueryFilter,
+    for<'a, 'i> CI: SetItem<&'a mut D::Item<'i>>,
+    CI: Clone + Send + 'static,
+{
+    let mut item = query.get_single_mut().ok();
+
+    let changed = if let Some(item) = &item {
+        !*prev_some || item.is_changed()
+    } else {
+        *prev_some
+    };
+
+    *prev_some = item.is_some();
+
+    if changed {
+        let item = item.map(|item| item.clone_item());
+        duplex.tx().send(item).unwrap();
+    } else {
+        for event in duplex.rx().try_iter() {
+            if let (Some(event), Some(item)) = (event, &mut item) {
+                event.set_item(item);
+            }
+        }
     }
 }

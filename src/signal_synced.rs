@@ -7,27 +7,27 @@ use std::ops::DerefMut;
 use std::panic::Location;
 
 /// This is basically identical to a Leptos `RwSignal` but is automatically synced with a Bevy
-/// `Resource`.
-pub struct RwSignalResource<T> {
+/// type like a `Resource` or a `Query`.
+pub struct RwSignalSynced<T> {
     rw_signal: RwSignal<T>,
     tx: StoredValue<Sender<T>>,
 }
 
-impl<T> Clone for RwSignalResource<T> {
+impl<T> Clone for RwSignalSynced<T> {
     fn clone(&self) -> Self {
         *self
     }
 }
 
-impl<T> Copy for RwSignalResource<T> {}
+impl<T> Copy for RwSignalSynced<T> {}
 
-impl<T> DefinedAt for RwSignalResource<T> {
+impl<T> DefinedAt for RwSignalSynced<T> {
     fn defined_at(&self) -> Option<&'static Location<'static>> {
         self.rw_signal.defined_at()
     }
 }
 
-impl<T> IsDisposed for RwSignalResource<T>
+impl<T> IsDisposed for RwSignalSynced<T>
 where
     T: 'static,
 {
@@ -36,7 +36,7 @@ where
     }
 }
 
-impl<T> ReadUntracked for RwSignalResource<T>
+impl<T> ReadUntracked for RwSignalSynced<T>
 where
     T: 'static,
     RwSignal<T>: ReadUntracked<Value = ReadGuard<T, Plain<T>>>,
@@ -48,7 +48,7 @@ where
     }
 }
 
-impl<T> Track for RwSignalResource<T>
+impl<T> Track for RwSignalSynced<T>
 where
     RwSignal<T>: Track,
 {
@@ -57,7 +57,7 @@ where
     }
 }
 
-impl<T> Notify for RwSignalResource<T>
+impl<T> Notify for RwSignalSynced<T>
 where
     RwSignal<T>: Notify,
 {
@@ -66,7 +66,7 @@ where
     }
 }
 
-impl<T> Write for RwSignalResource<T>
+impl<T> Write for RwSignalSynced<T>
 where
     T: Send + Clone + 'static,
     RwSignal<T>: Write<Value = T> + GetUntracked<Value = T>,
@@ -98,12 +98,14 @@ where
     }
 }
 
-// TODO : make sync_resource out of this with an `Into<UseRwSignal>` as input.
-/// Creates a pair of a `RwSignalResource` and a `BevyEventDuplex`.
+// TODO : make sync_resource out of this with an `Into<UseRwSignal>` as input?
+
+/// Creates a pair of a `RwSignalSynced` and a `BevyEventDuplex`.
 ///
 /// The first can be used just like a `RwSignal` in Leptos. The `BevyEventDuplex` that has to
-/// be passed into the Bevy app where it will be used to sync the signal with a Bevy `Resource`.
-pub fn signal_resource<T>(initial_value: T) -> (RwSignalResource<T>, BevyEventDuplex<T>)
+/// be passed into the Bevy app where it will be used to sync the signal with a Bevy `Resource` or
+/// a `Query`.
+pub fn signal_synced<T>(initial_value: T) -> (RwSignalSynced<T>, BevyEventDuplex<T>)
 where
     T: Send + Sync + Clone + 'static,
 {
@@ -127,7 +129,7 @@ where
     });
 
     (
-        RwSignalResource {
+        RwSignalSynced {
             rw_signal: signal,
             tx: StoredValue::new(tx_l2b),
         },

@@ -85,7 +85,8 @@
 mod app_extension;
 mod events;
 mod leptos_component;
-mod resources;
+mod queries;
+mod signal_synced;
 pub mod systems;
 pub mod traits;
 mod utils;
@@ -94,5 +95,6 @@ pub mod prelude {
     pub use crate::app_extension::*;
     pub use crate::events::*;
     pub use crate::leptos_component::*;
-    pub use crate::resources::*;
+    pub use crate::queries::*;
+    pub use crate::signal_synced::*;
 }
