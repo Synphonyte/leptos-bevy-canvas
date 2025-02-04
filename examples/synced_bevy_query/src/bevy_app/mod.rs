@@ -3,18 +3,18 @@ mod resources;
 mod setup;
 mod systems;
 
-use crate::bevy_app::resources::*;
 use crate::bevy_app::setup::setup_scene;
 use crate::bevy_app::systems::*;
-use crate::events::{ClickEvent, TextEvent};
 use crate::{RENDER_HEIGHT, RENDER_WIDTH};
 use bevy::asset::AssetMetaCheck;
+use bevy::input::common_conditions::input_pressed;
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
+use bevy_rand::prelude::*;
 use leptos_bevy_canvas::prelude::*;
 use leptos_bevy_canvas_examples::camera_from_mouse;
 
-pub fn init_bevy_app(selected_query_duplex: BevyEventDuplex<Option<Name>>) -> App {
+pub fn init_bevy_app(selected_query_duplex: BevyQueryDuplex<(Name,), With<Transform>>) -> App {
     let mut app = App::new();
     app.add_plugins((
         DefaultPlugins
@@ -33,11 +33,18 @@ pub fn init_bevy_app(selected_query_duplex: BevyEventDuplex<Option<Name>>) -> Ap
                 ..default()
             }),
         MeshPickingPlugin,
-        // bevy_inspector_egui::quick::WorldInspectorPlugin::new(),
+        EntropyPlugin::<WyRand>::default(),
+        bevy_inspector_egui::quick::WorldInspectorPlugin::new(),
     ))
-    .sync_leptos_signal_with_query::<&mut Name, (), _>(selected_query_duplex)
+    .sync_leptos_signal_with_query(selected_query_duplex)
     .add_systems(Startup, (setup_scene,))
-    .add_systems(Update, (camera_from_mouse, update_text));
+    .add_systems(
+        Update,
+        (
+            camera_from_mouse,
+            change_name.run_if(input_pressed(KeyCode::Enter)),
+        ),
+    );
 
     app
 }

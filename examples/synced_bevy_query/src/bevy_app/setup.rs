@@ -41,6 +41,7 @@ pub fn setup_scene(
         Mesh3d(meshes.add(Plane3d::default().mesh().size(50.0, 50.0).subdivisions(10))),
         MeshMaterial3d(ground_matl.clone()),
         PickingBehavior::IGNORE, // Disable picking for the ground plane.
+        Name::new("Ground"),
     ));
 
     // Light

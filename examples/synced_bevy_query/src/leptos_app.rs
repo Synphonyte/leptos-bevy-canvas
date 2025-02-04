@@ -1,7 +1,7 @@
 use crate::bevy_app::init_bevy_app;
 use crate::events::{ClickEvent, TextEvent};
 use crate::{RENDER_HEIGHT, RENDER_WIDTH};
-use bevy::prelude::Name;
+use bevy::prelude::{Name, Transform, With};
 use leptos::prelude::*;
 use leptos_bevy_canvas::prelude::*;
 use leptos_use::use_debounce_fn;
@@ -15,7 +15,21 @@ pub enum EventDirection {
 
 #[component]
 pub fn App() -> impl IntoView {
-    let (selected, selected_query_duplex) = BevyQuery::<&mut Name>::signal();
+    let (selected, selected_query_duplex) = single_query_signal::<(Name,), With<Transform>>();
+
+    let input = move || {
+        selected.read().as_ref().map(|(name,)| {
+            view! {
+                <input
+                    type="text"
+                    value=name.to_string()
+                    on:input=move |ev| {
+                        selected.write().as_mut().map(|(name,)| name.set(event_target_value(&ev)));
+                    }
+                />
+            }
+        })
+    };
 
     view! {
         <div class="flex w-full mx-auto max-w-[1400px] p-5 items-center">
@@ -37,44 +51,12 @@ pub fn App() -> impl IntoView {
 
             <Frame class="border-blue-500 bg-blue-500/5 max-w-[200px]">
                 <h2 class="text-xl font-bold text-blue-500 relative top-[-10px]">Leptos</h2>
+
+                {input}
             </Frame>
         </div>
     }
 }
-
-#[component]
-pub fn TextDisplay(
-    text: ReadSignal<String>,
-    click_event_receiver: LeptosEventReceiver<ClickEvent>,
-) -> impl IntoView {
-    view! {
-        <div class="mt-3 text-sm font-medium text-white">
-            Preview
-        </div>
-        <div class="mt-2 border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 text-white">
-            <For
-                each=move || { text.get().chars().enumerate().collect::<Vec<_>>() }
-                key=|(i, _)| *i
-                children=move |(i, c)| {
-                    let class = move || {
-                        let class = if let Some(event) = click_event_receiver.get() {
-                            if event.char_index == i { "top-[-5px]" } else { "top-0" }
-                        } else {
-                            "top-0"
-                        };
-
-                        format!(
-                            "relative inline-block transition-all duration-200 ease-out {class}",
-                        )
-                    };
-
-                    view! { <span class=class>{c}</span> }
-                }
-            />
-        </div>
-    }
-}
-
 
 #[component]
 pub fn Frame(class: &'static str, children: Children) -> impl IntoView {

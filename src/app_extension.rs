@@ -1,8 +1,7 @@
-use crate::events::BevyEventDuplex;
-use crate::prelude::{CloneItem, SetItem};
+use crate::prelude::{BevyQueryDuplex, QueryDataOwned};
 use crate::systems::*;
 use crate::traits::{HasReceiver, HasSender};
-use bevy::ecs::query::{QueryData, QueryFilter, WorldQuery};
+use bevy::ecs::query::QueryFilter;
 use bevy::prelude::*;
 
 /// Adds synchronization methods to the Bevy app
@@ -31,13 +30,10 @@ pub trait LeptosBevyApp {
         R: Resource + Clone,
         D: HasReceiver<R> + HasSender<R> + Resource;
 
-    fn sync_leptos_signal_with_query<D, F, CI>(&mut self, duplex: BevyEventDuplex<Option<CI>>) -> &mut Self
+    fn sync_leptos_signal_with_query<D, F>(&mut self, duplex: BevyQueryDuplex<D, F>) -> &mut Self
     where
-        D: QueryData + 'static,
-        for<'i> D::Item<'i>: CloneItem<Output = CI> + DetectChanges,
-        F: QueryFilter + 'static,
-        for<'a, 'i> CI: SetItem<&'a mut D::Item<'i>>,
-        CI: Clone + Send + 'static;
+        for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
+        F: QueryFilter + 'static;
 }
 
 impl LeptosBevyApp for App {
@@ -101,15 +97,12 @@ impl LeptosBevyApp for App {
         )
     }
 
-    fn sync_leptos_signal_with_query<D, F, CI>(&mut self, duplex: BevyEventDuplex<Option<CI>>) -> &mut Self
+    fn sync_leptos_signal_with_query<D, F>(&mut self, duplex: BevyQueryDuplex<D, F>) -> &mut Self
     where
-        D: QueryData + 'static,
-        for<'i> D::Item<'i>: CloneItem<Output = CI> + DetectChanges,
+        for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
         F: QueryFilter + 'static,
-        for<'a, 'i> CI: SetItem<&'a mut D::Item<'i>>,
-        CI: Clone + Send + 'static,
     {
-        self.insert_resource(duplex)
-            .add_systems(Update, sync_query::<D, F, CI>.in_set(SyncQuerySet))
+        self.insert_resource(duplex.duplex)
+            .add_systems(Update, sync_query::<D, F>.in_set(SyncQuerySet))
     }
 }

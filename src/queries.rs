@@ -1,99 +1,114 @@
 use crate::events::BevyEventDuplex;
 use crate::signal_synced::{signal_synced, RwSignalSynced};
-use crate::traits::{HasReceiver, HasSender};
-use bevy::ecs::query::{QueryData, QueryFilter};
+use bevy::ecs::query::{QueryData, QueryFilter, WorldQuery};
 use bevy::prelude::*;
 use bevy::utils::all_tuples;
-use leptos::prelude::*;
 use paste::paste;
 use std::marker::PhantomData;
 
-pub struct BevyQuery<D: QueryData, F: QueryFilter = ()>(PhantomData<(D, F)>);
-
-impl<D: QueryData, F: QueryFilter> Clone for BevyQuery<D, F> {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-impl<D: QueryData, F: QueryFilter> Copy for BevyQuery<D, F> {}
-
-impl<D, F, CI> BevyQuery<D, F>
+/// `RwSignal` like synchronization for bevy queries.
+///
+/// Creates a pair of a `RwSignalSynced` and a `BevyQueryDuplex` for a bevy query that is
+/// evaluated as `.get_single_mut()`.
+///
+/// ## Example
+///
+/// ```
+/// # use bevy::prelude::*;
+/// # use leptos_bevy_canvas::prelude::single_query_signal;
+/// #
+/// # #[derive(Component)]
+/// # struct Selected;
+///
+/// let (selected, selected_query_duplex) = single_query_signal::<(Transform,), With<Selected>>();
+/// ```
+pub fn single_query_signal<D, F>() -> (RwSignalSynced<Option<D>>, BevyQueryDuplex<D, F>)
 where
-    D: QueryData,
+    for<'a> D: QueryDataOwned<'a> + Clone + Send + Sync + 'static,
     F: QueryFilter,
-    CI: Clone + Send + Sync + 'static,
-    for<'i> D::Item<'i>: CloneItem<Output = CI>,
 {
-    #[inline(always)]
-    pub fn signal() -> (RwSignalSynced<Option<CI>>, BevyEventDuplex<Option<CI>>) {
-        signal_synced(None)
-    }
+    let (signal, duplex) = signal_synced(None);
+
+    (
+        signal,
+        BevyQueryDuplex {
+            duplex,
+            marker: PhantomData,
+        },
+    )
 }
 
-pub trait CloneItem {
-    type Output;
+pub trait QueryDataOwned<'q> {
+    type Qdata: QueryData + WorldQuery;
 
-    fn clone_item(&self) -> Self::Output;
+    fn from_query_data<'a>(data: &<Self::Qdata as WorldQuery>::Item<'a>) -> Self;
+
+    fn set_query_data<'a>(&self, data: &mut <Self::Qdata as WorldQuery>::Item<'a>);
+
+    fn is_changed<'a>(data: &<Self::Qdata as WorldQuery>::Item<'a>) -> bool;
 }
 
-impl<T: Clone> CloneItem for Mut<'_, T> {
-    type Output = T;
-
-    fn clone_item(&self) -> Self::Output {
-        (*self).clone()
-    }
-}
-
-macro_rules! impl_clone_item {
+macro_rules! impl_as_query_data {
     ($(#[$meta:meta])* $($name:ident),*) => {
-        #[allow(clippy::unused_unit)]
         $(#[$meta])*
-        impl<$($name: Clone),*> CloneItem for Mut<'_, ($(&$name,)*)> {
-            type Output = ($($name,)*);
+        impl<'q, $($name: bevy::prelude::Component + Clone),*> QueryDataOwned<'q> for ($($name,)*) {
+            type Qdata = ($(&'q mut $name,)*);
 
-            fn clone_item(&self) -> Self::Output {
+            fn from_query_data<'a>(data: &<Self::Qdata as WorldQuery>::Item<'a>) -> Self {
                 paste! {
-                    let ($([<$name:lower>],)*) = **self;
-
+                    let ($([<$name:lower>],)*) = data;
                     ($(
-                        [<$name:lower>].clone(),
+                        (**[<$name:lower>]).clone(),
                     )*)
                 }
             }
-        }
-    };
-}
 
-// all_tuples!(impl_clone_item, 1, 15, T);
-
-pub trait SetItem<T> {
-    fn set_item(&self, item: T);
-}
-
-impl<T: Clone> SetItem<&mut Mut<'_, T>> for T {
-    fn set_item(&self, item: &mut Mut<'_, T>) {
-        **item = self.clone();
-    }
-}
-
-macro_rules! impl_set_item {
-    ($(#[$meta:meta])* $($name:ident),*) => {
-        #[allow(clippy::unused_unit)]
-        $(#[$meta])*
-        impl<$($name: Clone),*> SetItem<($(&mut $name,)*)> for ($($name,)*) {
-            fn set_item(&self, item: ($(&mut $name,)*)) {
+            fn set_query_data<'a>(&self, data: &mut <Self::Qdata as WorldQuery>::Item<'a>) {
                 paste! {
-                    let ($([<$name:lower>],)*) = item;
-                    let ($([<$name:lower _self>],)*) = self.clone();
+                    let ($([<$name:lower>],)*) = data;
+                    let ($([<$name:lower _self>],)*) = self;
 
                     $(
-                        *[<$name:lower>] = [<$name:lower _self>];
+                        **[<$name:lower>] = (*[<$name:lower _self>]).clone();
                     )*
+                }
+            }
+
+            fn is_changed<'a>(data: &<Self::Qdata as WorldQuery>::Item<'a>) -> bool {
+                paste! {
+                    let ($([<$name:lower>],)*) = data;
+                    $(
+                        if [<$name:lower>].is_changed() {
+                            return true;
+                        }
+                    )*
+                    false
                 }
             }
         }
     };
 }
 
-all_tuples!(impl_set_item, 1, 15, T);
+all_tuples!(impl_as_query_data, 1, 15, T);
+
+pub struct BevyQueryDuplex<D, F = ()>
+where
+    for<'a> D: QueryDataOwned<'a>,
+    F: QueryFilter,
+{
+    pub(crate) duplex: BevyEventDuplex<Option<D>>,
+    marker: PhantomData<F>,
+}
+
+impl<D, F> Clone for BevyQueryDuplex<D, F>
+where
+    for<'a> D: QueryDataOwned<'a>,
+    F: QueryFilter,
+{
+    fn clone(&self) -> Self {
+        Self {
+            duplex: self.duplex.clone(),
+            marker: PhantomData,
+        }
+    }
+}

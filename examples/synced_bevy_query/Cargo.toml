@@ -4,12 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bevy-inspector-egui = "0.29"
+bevy_rand.workspace = true
 console_error_panic_hook.workspace = true
 leptos.workspace = true
 leptos-bevy-canvas.workspace = true
 leptos-bevy-canvas-examples.workspace = true
 leptos-use.workspace = true
-meshtext = "0.3.1"
+rand_core.workspace = true
 
 [dependencies.bevy]
 workspace = true

@@ -1,5 +1,5 @@
 use crate::events::BevyEventDuplex;
-use crate::prelude::{CloneItem, SetItem};
+use crate::prelude::QueryDataOwned;
 use crate::traits::{HasReceiver, HasSender};
 use bevy::ecs::event::EventId;
 use bevy::ecs::query::{QueryData, QueryFilter, WorldQuery};
@@ -76,21 +76,18 @@ where
 }
 
 /// Synchronizes a Bevy query's `.get_single_mut()` with a Leptos signal.
-pub fn sync_query<D, F, CI>(
-    duplex: Res<BevyEventDuplex<Option<CI>>>,
-    mut query: Query<D, F>,
+pub fn sync_query<D, F>(
+    duplex: Res<BevyEventDuplex<Option<D>>>,
+    mut query: Query<<D as QueryDataOwned>::Qdata, F>,
     mut prev_some: Local<bool>,
 ) where
-    D: QueryData,
-    for<'i> D::Item<'i>: CloneItem<Output = CI> + DetectChanges,
+    for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
     F: QueryFilter,
-    for<'a, 'i> CI: SetItem<&'a mut D::Item<'i>>,
-    CI: Clone + Send + 'static,
 {
     let mut item = query.get_single_mut().ok();
 
     let changed = if let Some(item) = &item {
-        !*prev_some || item.is_changed()
+        !*prev_some || D::is_changed(item)
     } else {
         *prev_some
     };
@@ -98,12 +95,12 @@ pub fn sync_query<D, F, CI>(
     *prev_some = item.is_some();
 
     if changed {
-        let item = item.map(|item| item.clone_item());
+        let item = item.map(|item| D::from_query_data(&item));
         duplex.tx().send(item).unwrap();
     } else {
         for event in duplex.rx().try_iter() {
             if let (Some(event), Some(item)) = (event, &mut item) {
-                event.set_item(item);
+                event.set_query_data(item);
             }
         }
     }
