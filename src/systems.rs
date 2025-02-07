@@ -2,7 +2,7 @@ use crate::events::BevyEventDuplex;
 use crate::prelude::QueryDataOwned;
 use crate::traits::{HasReceiver, HasSender};
 use bevy::ecs::event::EventId;
-use bevy::ecs::query::{QueryData, QueryFilter, WorldQuery};
+use bevy::ecs::query::{QueryFilter};
 use bevy::prelude::*;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
