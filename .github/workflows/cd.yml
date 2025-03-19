@@ -25,7 +25,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Check version in docs
-        run: python3 docs/check_version_docs.py
+        run: python3 docs/check_version_in_docs.py
 
       - name: Check formatting
         run: cargo fmt --check
