@@ -1,5 +1,13 @@
 //! Embed an idiomatic Bevy app inside your Leptos app.
 //!
+//! ## Send and Receive Events
+//!
+//! ![Events Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/unidir_events.webp)
+//!
+//! ## Sync Bevy Queries
+//!
+//! ![Query Sync Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/synced_bevy_query.webp)
+//!
 //! # Features
 //!
 //! - **Easy to use** - Simply embed your Bevy app inside your Leptos app with the
@@ -81,6 +89,14 @@
 //!     app
 //! }
 //! ```
+//!
+//! Please check the examples to see how to synchronize a `Resource` or a `Query`.
+//!
+//! # Compatibility
+//!
+//! | Crate version | Compatible Leptos version | Compatible Bevy version |
+//! |---------------|---------------------------|-------------------------|
+//! | 0.1, 0.2      | 0.7                       | 0.15                    |
 
 mod app_extension;
 mod events;

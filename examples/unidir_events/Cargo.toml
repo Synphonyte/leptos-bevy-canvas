@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bevy-inspector-egui.workspace = true
 console_error_panic_hook.workspace = true
 leptos.workspace = true
 leptos-bevy-canvas.workspace = true
-leptos-bevy-canvas-examples.workspace = true
 leptos-use.workspace = true
 meshtext = "0.3.1"
 
@@ -20,5 +20,5 @@ features = [
     "bevy_window",
     "bevy_winit",
     "tonemapping_luts",
-    "webgl2"
+    "webgl2",
 ]

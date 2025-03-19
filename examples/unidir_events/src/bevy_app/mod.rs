@@ -12,7 +12,6 @@ use bevy::asset::AssetMetaCheck;
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 use leptos_bevy_canvas::prelude::*;
-use leptos_bevy_canvas_examples::camera_from_mouse;
 
 pub fn init_bevy_app(
     text_receiver: BevyEventReceiver<TextEvent>,
@@ -43,7 +42,7 @@ pub fn init_bevy_app(
     .import_event_from_leptos(text_receiver)
     .export_event_to_leptos(click_sender)
     .add_systems(Startup, (setup_scene,))
-    .add_systems(Update, (camera_from_mouse, update_text));
+    .add_systems(Update, (update_text,));
 
     app
 }

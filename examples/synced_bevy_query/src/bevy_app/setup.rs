@@ -1,11 +1,18 @@
+use crate::bevy_app::components::*;
 use bevy::asset::Assets;
-use bevy::color::palettes::tailwind::GRAY_700;
+use bevy::color::palettes::tailwind::*;
 use bevy::color::Color;
 use bevy::core_pipeline::Skybox;
 use bevy::math::Vec3;
 use bevy::pbr::{MeshMaterial3d, PointLight, StandardMaterial};
 use bevy::picking::PickingBehavior;
 use bevy::prelude::*;
+use bevy::render::render_resource::Face;
+
+const CUBE_X: f32 = 4.0;
+const CUBE_Y: f32 = 0.0;
+const CUBE_SCALE: f32 = 3.0;
+const HIGHLIGHT_SCALE: f32 = 1.03;
 
 pub fn setup_scene(
     mut commands: Commands,
@@ -13,36 +20,57 @@ pub fn setup_scene(
     mut materials: ResMut<Assets<StandardMaterial>>,
     asset_server: Res<AssetServer>,
 ) {
-    let ground_matl = materials.add(Color::from(GRAY_700));
+    // Cubes
+    let cube = meshes.add(Cuboid::default());
 
-    // Spawn the shapes. The meshes will be pickable by default.
-    // for (i, shape) in shapes.into_iter().enumerate() {
-    //     commands
-    //         .spawn((
-    //             Mesh3d(shape),
-    //             MeshMaterial3d(white_matl.clone()),
-    //             Transform::from_xyz(
-    //                 -SHAPES_X_EXTENT / 2. + i as f32 / (num_shapes - 1) as f32 * SHAPES_X_EXTENT,
-    //                 2.0,
-    //                 Z_EXTENT / 2.,
-    //             )
-    //             .with_rotation(Quat::from_rotation_x(-PI / 4.)),
-    //             Shape,
-    //         ))
-    //         .observe(update_material_on::<Pointer<Over>>(hover_matl.clone()))
-    //         .observe(update_material_on::<Pointer<Out>>(white_matl.clone()))
-    //         .observe(update_material_on::<Pointer<Down>>(pressed_matl.clone()))
-    //         .observe(update_material_on::<Pointer<Up>>(hover_matl.clone()))
-    //         .observe(rotate_on_drag);
-    // }
+    let highlight_material = materials.add(StandardMaterial {
+        base_color: Color::WHITE,
+        cull_mode: Some(Face::Front),
+        unlit: true,
+        ..default()
+    });
 
-    // Ground
-    commands.spawn((
-        Mesh3d(meshes.add(Plane3d::default().mesh().size(50.0, 50.0).subdivisions(10))),
-        MeshMaterial3d(ground_matl.clone()),
-        PickingBehavior::IGNORE, // Disable picking for the ground plane.
-        Name::new("Ground"),
-    ));
+    commands
+        .spawn((
+            Mesh3d(cube.clone()),
+            ObjectColor::new(Color::from(RED_500)),
+            MeshMaterial3d(materials.add(Color::from(RED_500))),
+            Transform::from_xyz(-CUBE_X, CUBE_Y, 0.0).with_scale(Vec3::splat(CUBE_SCALE)),
+            RotationSpeed::new(0.01),
+        ))
+        .observe(select_on_click)
+        .with_children(|parent| {
+            parent
+                .spawn((
+                    Mesh3d(cube.clone()),
+                    MeshMaterial3d(highlight_material.clone()),
+                    Transform::from_scale(Vec3::splat(HIGHLIGHT_SCALE)),
+                    PickingBehavior::IGNORE,
+                    Visibility::Hidden,
+                ))
+                .observe(select_on_click);
+        });
+
+    commands
+        .spawn((
+            Mesh3d(cube.clone()),
+            ObjectColor::new(Color::from(GREEN_500)),
+            MeshMaterial3d(materials.add(Color::from(GREEN_500))),
+            Transform::from_xyz(CUBE_X, CUBE_Y, 0.0).with_scale(Vec3::splat(CUBE_SCALE)),
+            RotationSpeed::new(-0.02),
+        ))
+        .observe(select_on_click)
+        .with_children(|parent| {
+            parent
+                .spawn((
+                    Mesh3d(cube.clone()),
+                    MeshMaterial3d(highlight_material),
+                    Transform::from_scale(Vec3::splat(HIGHLIGHT_SCALE)),
+                    PickingBehavior::IGNORE,
+                    Visibility::Hidden,
+                ))
+                .observe(select_on_click);
+        });
 
     // Light
     commands.spawn((
@@ -72,4 +100,16 @@ pub fn setup_scene(
             rotation: Quat::IDENTITY,
         },
     ));
+}
+
+pub fn select_on_click(
+    click: Trigger<Pointer<Click>>,
+    mut commands: Commands,
+    prev_selected: Query<Entity, With<Selected>>,
+) {
+    if let Ok(entity) = prev_selected.get_single() {
+        commands.entity(entity).remove::<Selected>();
+    }
+
+    commands.entity(click.entity()).insert(Selected);
 }

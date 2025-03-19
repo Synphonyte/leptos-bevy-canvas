@@ -6,11 +6,17 @@
 [![Build Status](https://github.com/synphonyte/leptos-bevy-canvas/actions/workflows/ci.yml/badge.svg)](https://github.com/synphonyte/leptos-bevy-canvas/actions/workflows/ci.yml)
 [![built with Codeium](https://codeium.com/badges/main)](https://codeium.com)
 
-![Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/demo.gif)
-
 <!-- cargo-rdme start -->
 
 Embed an idiomatic Bevy app inside your Leptos app.
+
+### Send and Receive Events
+
+![Events Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/unidir_events.webp)
+
+### Sync Bevy Queries
+
+![Query Sync Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/synced_bevy_query.webp)
 
 ## Features
 
@@ -94,10 +100,12 @@ fn init_bevy_app( text_receiver: BevyEventReceiver<TextEvent>) -> App {
 }
 ```
 
-<!-- cargo-rdme end -->
+Please check the examples to see how to synchronize a `Resource` or a `Query`.
 
 ## Compatibility
 
 | Crate version | Compatible Leptos version | Compatible Bevy version |
 |---------------|---------------------------|-------------------------|
-| 0.1           | 0.7                       | 0.15                    |
+| 0.1, 0.2      | 0.7                       | 0.15                    |
+
+<!-- cargo-rdme end -->

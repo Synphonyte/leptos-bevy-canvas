@@ -1,13 +1,11 @@
 [workspace]
 resolver = "2"
 
-members = [
-    "unidir_events",
-    "synced_bevy_query",
-]
+members = ["unidir_events", "synced_bevy_query"]
 
 [workspace.dependencies]
 bevy = { version = "0.15", default-features = false }
+bevy-inspector-egui = "0.30"
 bevy_rand = { version = "0.9", features = ["wyrand"] }
 console_error_panic_hook = "0.1"
 #getrandom = { version = "0.3.1", features = ["js"] }

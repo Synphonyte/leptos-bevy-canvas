@@ -1,5 +1,6 @@
 use crate::bevy_app::components::CharIndex;
 use crate::bevy_app::resources::*;
+use crate::bevy_app::setup::CAMERA_LOOK_AT;
 use crate::events::{ClickEvent, TextEvent};
 use bevy::asset::{Assets, RenderAssetUsages};
 use bevy::color::palettes::tailwind::GREEN_100;
@@ -15,6 +16,7 @@ const LETTER_Y_ANGLE_STEP: f32 = 0.08;
 pub fn update_text(
     mut commands: Commands,
     mut event_reader: EventReader<TextEvent>,
+    mut camera_query: Query<&mut Transform, With<Camera3d>>,
     mut current_text: ResMut<CurrentText>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -29,6 +31,13 @@ pub fn update_text(
 
         let mut transform = Transform::from_xyz(0.0, 0.0, 6.0);
         let mut new_glyph_entites = Vec::new();
+
+        let camera_rot =
+            Quat::from_rotation_y(LETTER_Y_ANGLE_STEP * current_text.text.len() as f32 * 0.5);
+        let camera_pos = camera_rot * Vec3::new(0.0, 7., 14.0);
+        let mut camera_transform = camera_query.single_mut();
+        *camera_transform =
+            Transform::from_translation(camera_pos).looking_at(CAMERA_LOOK_AT, Vec3::Y);
 
         for (i, ((existing_glyph, event_glyph), existing_glyph_entity)) in current_text
             .text
