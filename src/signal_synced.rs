@@ -2,7 +2,6 @@ use crate::events::BevyEventDuplex;
 use crossbeam_channel::Sender;
 use leptos::prelude::guards::{Plain, ReadGuard};
 use leptos::prelude::*;
-use leptos_use::use_raf_fn;
 use std::ops::DerefMut;
 use std::panic::Location;
 
@@ -118,15 +117,23 @@ where
 
     let signal = RwSignal::new(initial_value);
 
-    use_raf_fn({
-        let rx = rx_b2l.clone();
+    #[cfg(target_arch = "wasm32")]
+    {
+        leptos_use::use_raf_fn({
+            let rx = rx_b2l.clone();
 
-        move |_| {
-            for event in rx.try_iter() {
-                signal.set(event);
+            move |_| {
+                for event in rx.try_iter() {
+                    signal.set(event);
+                }
             }
-        }
-    });
+        });
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let _ = rx_b2l;
+    }
 
     (
         RwSignalSynced {
