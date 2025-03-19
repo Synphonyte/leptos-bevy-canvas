@@ -12,6 +12,7 @@
 //!   your Bevy app or your Leptos app. It just gives you the tools for them to communicate.
 //! - **Events** - Send events in either or both directions between your Bevy app and your Leptos app.
 //! - **Resource signals** - Synchronize Bevy `Resource`s with `RwSignal`s in your Leptos app.
+//! - **Query signals** - Synchronize Bevy `Query`s with `RwSignal`s in your Leptos app.
 //!
 //! # Example
 //!
