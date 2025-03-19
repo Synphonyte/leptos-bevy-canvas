@@ -1,12 +1,8 @@
 //! Embed an idiomatic Bevy app inside your Leptos app.
 //!
-//! ## Send and Receive Events
+//! [Send and Receive Events ![Events Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/unidir_events.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/unidir_events)
 //!
-//! ![Events Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/unidir_events.webp)
-//!
-//! ## Sync Bevy Queries
-//!
-//! ![Query Sync Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/synced_bevy_query.webp)
+//! [Sync Bevy Queries ![Query Sync Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/synced_bevy_query.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/synced_bevy_query)
 //!
 //! # Features
 //!

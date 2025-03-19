@@ -2,6 +2,8 @@
 
 Shows off how to send and receive events from and to a Bevy app unidirectionally.
 
+![Events Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/unidir_events.webp)
+
 ## Run the Example
 
 This runs just like any other CSR Leptos app.

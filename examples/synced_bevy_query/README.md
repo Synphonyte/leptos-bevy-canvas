@@ -1,6 +1,8 @@
-# Unidirectional Events Example
+# Synced Bevy Query Example
 
-Shows off how to send and receive events from and to a Bevy app unidirectionally.
+Shows off how to synchronize a Bevy Query with a RwSignal in your Leptos app.
+
+![Query Sync Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/synced_bevy_query.webp)
 
 ## Run the Example
 
