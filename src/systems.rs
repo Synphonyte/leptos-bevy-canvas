@@ -39,7 +39,7 @@ pub fn import_and_send_leptos_events<R, E>(
     imported_event_ids.clear();
 
     for event in rx.rx().try_iter() {
-        let event_id = event_writer.send(event);
+        let event_id = event_writer.write(event);
         imported_event_ids.push(event_id);
     }
 }

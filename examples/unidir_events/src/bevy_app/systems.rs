@@ -35,9 +35,10 @@ pub fn update_text(
         let camera_rot =
             Quat::from_rotation_y(LETTER_Y_ANGLE_STEP * current_text.text.len() as f32 * 0.5);
         let camera_pos = camera_rot * Vec3::new(0.0, 7., 14.0);
-        let mut camera_transform = camera_query.single_mut();
-        *camera_transform =
-            Transform::from_translation(camera_pos).looking_at(CAMERA_LOOK_AT, Vec3::Y);
+        if let Ok(mut camera_transform) = camera_query.single_mut() {
+            *camera_transform =
+                Transform::from_translation(camera_pos).looking_at(CAMERA_LOOK_AT, Vec3::Y);
+        }
 
         for (i, ((existing_glyph, event_glyph), existing_glyph_entity)) in current_text
             .text
@@ -186,6 +187,6 @@ fn on_char_click(
             transform.translation.y = 0.5;
         }
 
-        event_writer.send(ClickEvent { char_index: index });
+        event_writer.write(ClickEvent { char_index: index });
     }
 }

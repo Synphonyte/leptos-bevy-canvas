@@ -19,11 +19,11 @@ pub fn apply_color(
 }
 
 pub fn selected_outline(
-    mut query: Query<(&Parent, &mut Visibility)>,
+    mut query: Query<(&ChildOf, &mut Visibility)>,
     selected_query: Query<&Selected>,
 ) {
     for (parent, mut visibility) in query.iter_mut() {
-        if selected_query.contains(parent.get()) {
+        if selected_query.contains(parent.parent()) {
             *visibility = Visibility::Inherited;
         } else {
             *visibility = Visibility::Hidden;

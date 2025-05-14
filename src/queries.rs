@@ -2,9 +2,9 @@ use crate::events::BevyEventDuplex;
 use crate::signal_synced::{signal_synced, RwSignalSynced};
 use bevy::ecs::query::{QueryData, QueryFilter, WorldQuery};
 use bevy::prelude::*;
-use bevy::utils::all_tuples;
 use paste::paste;
 use std::marker::PhantomData;
+use variadics_please::all_tuples;
 
 /// `RwSignal` like synchronization for bevy queries.
 ///
