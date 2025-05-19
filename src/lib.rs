@@ -93,7 +93,7 @@
 //!
 //! | Crate version | Compatible Leptos version | Compatible Bevy version |
 //! |---------------|---------------------------|-------------------------|
-//! | 0.3           | 0.7                       | 0.16                    |
+//! | 0.3           | 0.8                       | 0.16                    |
 //! | 0.1, 0.2      | 0.7                       | 0.15                    |
 
 mod app_extension;

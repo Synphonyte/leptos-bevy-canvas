@@ -26,3 +26,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Bevy <-> Leptos events
 - Added Resource <-> RwSignal syncing
 - Added `BevyCanvas` Leptos component
+
+
+## [0.1.0-alpha1] - 2024-09-12
+
+- Added Bevy <-> Leptos events
+- Added Resource <-> RwSignal syncing
+- Added `BevyCanvas` Leptos component
+
+
+## [0.3.0] - 2025-05-19
+
+- Updated to Leptos 0.8.2 and Bevy 0.16.0
