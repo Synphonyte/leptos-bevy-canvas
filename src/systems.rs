@@ -84,7 +84,7 @@ pub fn sync_query<D, F>(
     for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
     F: QueryFilter,
 {
-    let mut item = query.get_single_mut().ok();
+    let mut item = query.single_mut().ok();
 
     let changed = if let Some(item) = &item {
         !*prev_some || D::is_changed(item)

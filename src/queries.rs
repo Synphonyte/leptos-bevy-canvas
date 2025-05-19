@@ -1,6 +1,7 @@
 use crate::events::BevyEventDuplex;
 use crate::signal_synced::{signal_synced, RwSignalSynced};
-use bevy::ecs::query::{QueryData, QueryFilter, WorldQuery};
+use bevy::ecs::query::{QueryData, QueryFilter};
+use bevy::ecs::component::Mutable;
 use bevy::prelude::*;
 use paste::paste;
 use std::marker::PhantomData;
@@ -39,22 +40,22 @@ where
 }
 
 pub trait QueryDataOwned<'q> {
-    type Qdata: QueryData + WorldQuery;
+    type Qdata: QueryData;
 
-    fn from_query_data<'a>(data: &<Self::Qdata as WorldQuery>::Item<'a>) -> Self;
+    fn from_query_data<'a>(data: &<Self::Qdata as QueryData>::Item<'a>) -> Self;
 
-    fn set_query_data<'a>(&self, data: &mut <Self::Qdata as WorldQuery>::Item<'a>);
+    fn set_query_data<'a>(&self, data: &mut <Self::Qdata as QueryData>::Item<'a>);
 
-    fn is_changed<'a>(data: &<Self::Qdata as WorldQuery>::Item<'a>) -> bool;
+    fn is_changed<'a>(data: &<Self::Qdata as QueryData>::Item<'a>) -> bool;
 }
 
 macro_rules! impl_as_query_data {
     ($(#[$meta:meta])* $($name:ident),*) => {
         $(#[$meta])*
-        impl<'q, $($name: bevy::prelude::Component + Clone),*> QueryDataOwned<'q> for ($($name,)*) {
+        impl<'q, $($name: bevy::prelude::Component<Mutability = Mutable> + Clone),*> QueryDataOwned<'q> for ($($name,)*) {
             type Qdata = ($(&'q mut $name,)*);
 
-            fn from_query_data<'a>(data: &<Self::Qdata as WorldQuery>::Item<'a>) -> Self {
+            fn from_query_data<'a>(data: &<Self::Qdata as QueryData>::Item<'a>) -> Self {
                 paste! {
                     let ($([<$name:lower>],)*) = data;
                     ($(
@@ -63,7 +64,7 @@ macro_rules! impl_as_query_data {
                 }
             }
 
-            fn set_query_data<'a>(&self, data: &mut <Self::Qdata as WorldQuery>::Item<'a>) {
+            fn set_query_data<'a>(&self, data: &mut <Self::Qdata as QueryData>::Item<'a>) {
                 paste! {
                     let ($([<$name:lower>],)*) = data;
                     let ($([<$name:lower _self>],)*) = self;
@@ -74,7 +75,7 @@ macro_rules! impl_as_query_data {
                 }
             }
 
-            fn is_changed<'a>(data: &<Self::Qdata as WorldQuery>::Item<'a>) -> bool {
+            fn is_changed<'a>(data: &<Self::Qdata as QueryData>::Item<'a>) -> bool {
                 paste! {
                     let ($([<$name:lower>],)*) = data;
                     $(

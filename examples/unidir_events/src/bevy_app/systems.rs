@@ -5,6 +5,7 @@ use crate::events::{ClickEvent, TextEvent};
 use bevy::asset::{Assets, RenderAssetUsages};
 use bevy::color::palettes::tailwind::GREEN_100;
 use bevy::color::Color;
+use bevy::ecs::error::BevyError;
 use bevy::math::{Mat4, Vec3};
 use bevy::pbr::{MeshMaterial3d, StandardMaterial};
 use bevy::prelude::*;
@@ -21,7 +22,7 @@ pub fn update_text(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut selected_glyph: ResMut<SelectedGlyph>,
-) {
+) -> Result<(), BevyError> {
     for event in event_reader.read() {
         let transform_step: Transform =
             Transform::from_rotation(Quat::from_rotation_y(LETTER_Y_ANGLE_STEP));
@@ -113,6 +114,7 @@ pub fn update_text(
         current_text.glyph_entities = new_glyph_entites;
         current_text.text = event.text.clone();
     }
+    Ok(())
 }
 
 fn spawn_letter(
@@ -164,13 +166,13 @@ fn spawn_letter(
 }
 
 fn on_char_click(
-    trigger: Trigger<Pointer<Down>>,
+    trigger: Trigger<Pointer<Pressed>>,
     index_query: Query<&CharIndex>,
     mut transform_query: Query<&mut Transform>,
     mut event_writer: EventWriter<ClickEvent>,
     mut selected_glyph: ResMut<SelectedGlyph>,
-) {
-    let entity = trigger.entity();
+) -> Result<(), BevyError> {
+    let entity = trigger.target();
 
     if let Ok(index) = index_query.get(entity) {
         let index = **index;
@@ -189,4 +191,5 @@ fn on_char_click(
 
         event_writer.write(ClickEvent { char_index: index });
     }
+    Ok(())
 }
