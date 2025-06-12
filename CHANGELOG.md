@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Bevy 0.16 and Leptos 0.8 (thanks to @rtrottpax8)
 
+### Special thanks to our sponsor
+- @benwis
+
 ## [0.2.0] - 2025-03-19
 
 ### Breaking Changes 🛠
