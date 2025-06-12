@@ -12,7 +12,7 @@ getrandom = { version = "0.3.2", features = ["wasm_js"] }
 leptos = { version = "0.8.2", features = ["csr"] }
 leptos-bevy-canvas = { path = "../../leptos-bevy-canvas" }
 leptos-bevy-canvas-examples = { path = "." }
-leptos-use = "0.15.7"
+leptos-use = "0.16"
 rand_core = "0.6"
 web-sys = "0.3"
 wasm-bindgen = "0.2"
