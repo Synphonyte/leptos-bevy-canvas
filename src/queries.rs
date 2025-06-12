@@ -1,7 +1,7 @@
 use crate::events::BevyEventDuplex;
 use crate::signal_synced::{signal_synced, RwSignalSynced};
-use bevy::ecs::query::{QueryData, QueryFilter};
 use bevy::ecs::component::Mutable;
+use bevy::ecs::query::{QueryData, QueryFilter};
 use bevy::prelude::*;
 use paste::paste;
 use std::marker::PhantomData;
