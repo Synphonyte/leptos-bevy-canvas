@@ -39,7 +39,7 @@ pub fn import_and_send_leptos_events<R, E>(
     imported_event_ids.clear();
 
     for event in rx.rx().try_iter() {
-        let event_id = event_writer.send(event);
+        let event_id = event_writer.write(event);
         imported_event_ids.push(event_id);
     }
 }
@@ -84,7 +84,7 @@ pub fn sync_query<D, F>(
     for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
     F: QueryFilter,
 {
-    let mut item = query.get_single_mut().ok();
+    let mut item = query.single_mut().ok();
 
     let changed = if let Some(item) = &item {
         !*prev_some || D::is_changed(item)

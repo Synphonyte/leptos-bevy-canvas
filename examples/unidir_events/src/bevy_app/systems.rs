@@ -5,6 +5,7 @@ use crate::events::{ClickEvent, TextEvent};
 use bevy::asset::{Assets, RenderAssetUsages};
 use bevy::color::palettes::tailwind::GREEN_100;
 use bevy::color::Color;
+use bevy::ecs::error::BevyError;
 use bevy::math::{Mat4, Vec3};
 use bevy::pbr::{MeshMaterial3d, StandardMaterial};
 use bevy::prelude::*;
@@ -21,7 +22,7 @@ pub fn update_text(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut selected_glyph: ResMut<SelectedGlyph>,
-) {
+) -> Result<(), BevyError> {
     for event in event_reader.read() {
         let transform_step: Transform =
             Transform::from_rotation(Quat::from_rotation_y(LETTER_Y_ANGLE_STEP));
@@ -35,9 +36,10 @@ pub fn update_text(
         let camera_rot =
             Quat::from_rotation_y(LETTER_Y_ANGLE_STEP * current_text.text.len() as f32 * 0.5);
         let camera_pos = camera_rot * Vec3::new(0.0, 7., 14.0);
-        let mut camera_transform = camera_query.single_mut();
-        *camera_transform =
-            Transform::from_translation(camera_pos).looking_at(CAMERA_LOOK_AT, Vec3::Y);
+        if let Ok(mut camera_transform) = camera_query.single_mut() {
+            *camera_transform =
+                Transform::from_translation(camera_pos).looking_at(CAMERA_LOOK_AT, Vec3::Y);
+        }
 
         for (i, ((existing_glyph, event_glyph), existing_glyph_entity)) in current_text
             .text
@@ -112,6 +114,7 @@ pub fn update_text(
         current_text.glyph_entities = new_glyph_entites;
         current_text.text = event.text.clone();
     }
+    Ok(())
 }
 
 fn spawn_letter(
@@ -163,13 +166,13 @@ fn spawn_letter(
 }
 
 fn on_char_click(
-    trigger: Trigger<Pointer<Down>>,
+    trigger: Trigger<Pointer<Pressed>>,
     index_query: Query<&CharIndex>,
     mut transform_query: Query<&mut Transform>,
     mut event_writer: EventWriter<ClickEvent>,
     mut selected_glyph: ResMut<SelectedGlyph>,
-) {
-    let entity = trigger.entity();
+) -> Result<(), BevyError> {
+    let entity = trigger.target();
 
     if let Ok(index) = index_query.get(entity) {
         let index = **index;
@@ -186,6 +189,7 @@ fn on_char_click(
             transform.translation.y = 0.5;
         }
 
-        event_writer.send(ClickEvent { char_index: index });
+        event_writer.write(ClickEvent { char_index: index });
     }
+    Ok(())
 }

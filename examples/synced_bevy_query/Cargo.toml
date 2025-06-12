@@ -6,10 +6,12 @@ edition = "2021"
 [dependencies]
 bevy-inspector-egui.workspace = true
 console_error_panic_hook.workspace = true
+getrandom.workspace = true
 leptos.workspace = true
 leptos-bevy-canvas.workspace = true
 leptos-use.workspace = true
 rand_core.workspace = true
+uuid.workspace = true
 
 [dependencies.bevy]
 workspace = true
