@@ -41,6 +41,9 @@ pub fn App() -> impl IntoView {
     // a receiver for the Bevy app
     let (text_event_sender, bevy_text_receiver) = event_l2b::<TextEvent>();
 
+    // Optional: This initializes a receiver for the canvas cleanup/shutdown
+    let (shutdown_canvas, _) = event_l2b::<LeptosBevyCanvasCleanup>();
+
     let on_input = move |evt| {
         // send the event over to Bevy
         text_event_sender
@@ -62,6 +65,14 @@ pub fn App() -> impl IntoView {
             height="500"
         />
     }
+
+    // Optional: This will trigger a cleanup/shutdown of the Bevy app
+    // when the <BevyCanvas> component is unmounted
+    on_cleanup(move || {
+        shutdown_canvas
+            .send(LeptosBevyCanvasCleanup)
+            .expect("couldn't send cleanup to bevy app");
+    });
 }
 
 // In Bevy it ends up just as a normal event
@@ -87,6 +98,8 @@ fn init_bevy_app( text_receiver: BevyEventReceiver<TextEvent>) -> App {
                 }),
                 ..default()
             }),
+            // Optional: Add this libraries plugin to enable shutdown on unmount
+            LeptosBevyCanvasPlugin,
         )
         // import the event here into Bevy
         .import_event_from_leptos(text_receiver)
