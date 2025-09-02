@@ -86,8 +86,6 @@ fn init_bevy_app( text_receiver: BevyEventReceiver<TextEvent>) -> App {
                 }),
                 ..default()
             }),
-            // Optional: Add this libraries plugin to enable shutdown on unmount
-            LeptosBevyCanvasPlugin,
         )
         // import the event here into Bevy
         .import_event_from_leptos(text_receiver)
