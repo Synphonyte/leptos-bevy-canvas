@@ -99,6 +99,7 @@
 mod app_extension;
 mod events;
 mod leptos_component;
+pub mod plugin;
 mod queries;
 mod signal_synced;
 pub mod systems;
