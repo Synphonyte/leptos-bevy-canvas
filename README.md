@@ -56,7 +56,6 @@ pub fn App() -> impl IntoView {
                 // Pass the receiver into the Bevy app initialization
                 init_bevy_app(bevy_text_receiver)
             }
-
             {..}
             width="300"
             height="500"
