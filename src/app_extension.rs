@@ -30,6 +30,14 @@ pub trait LeptosBevyApp {
         R: Resource + Clone,
         D: HasReceiver<R> + HasSender<R> + Resource;
 
+    /// Adds state syncing between Bevy and Leptos. Takes the Bevy state receiver/sender as argument.
+    #[cfg(feature = "bevy_state")]
+    fn sync_leptos_signal_with_state<D, S>(&mut self, bevy_duplex: D) -> &mut Self
+    where
+        S: bevy::state::state::FreelyMutableState + Clone,
+        D: HasReceiver<S> + HasSender<S> + Resource;
+
+    /// Adds query syncing between Bevy and Leptos. Takes the Bevy query duplex as argument.
     fn sync_leptos_signal_with_query<D, F>(&mut self, duplex: BevyQueryDuplex<D, F>) -> &mut Self
     where
         for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
@@ -95,6 +103,20 @@ impl LeptosBevyApp for App {
             Update,
             sync_signal_resource::<D, R>.in_set(SyncSignalResourceSet),
         )
+    }
+
+    #[cfg(feature = "bevy_state")]
+    fn sync_leptos_signal_with_state<D, S>(&mut self, bevy_duplex: D) -> &mut Self
+    where
+        S: bevy::state::state::FreelyMutableState + Clone,
+        D: HasReceiver<S> + HasSender<S> + Resource,
+    {
+        for event in bevy_duplex.rx().try_iter() {
+            self.insert_state(event);
+        }
+
+        self.insert_resource(bevy_duplex)
+            .add_systems(Update, sync_signal_state::<D, S>.in_set(SyncSignalStateSet))
     }
 
     fn sync_leptos_signal_with_query<D, F>(&mut self, duplex: BevyQueryDuplex<D, F>) -> &mut Self

@@ -32,5 +32,5 @@ pub fn BevyCanvas(
             .expect("couldn't send cleanup to bevy app");
     });
 
-    view! { <canvas id=canvas_id></canvas> };
+    view! { <canvas id=canvas_id></canvas> }
 }

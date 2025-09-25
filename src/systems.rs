@@ -8,6 +8,10 @@ use bevy::prelude::*;
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub struct SyncSignalResourceSet;
 
+#[cfg(feature = "bevy_state")]
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
+pub struct SyncSignalStateSet;
+
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub struct ImportLeptosEventSet;
 
@@ -72,6 +76,22 @@ where
 
     for event in sync.rx().try_iter() {
         *resource = event;
+    }
+}
+
+/// Takes care of synchronizing a state between Bevy and a Leptos signal
+#[cfg(feature = "bevy_state")]
+pub fn sync_signal_state<D, S>(mut state: ResMut<State<S>>, sync: Res<D>)
+where
+    S: bevy::state::state::FreelyMutableState + Clone,
+    D: HasReceiver<S> + HasSender<S> + Resource,
+{
+    if state.is_changed() && !state.is_added() {
+        sync.tx().send(state.clone()).unwrap();
+    }
+
+    for event in sync.rx().try_iter() {
+        *state = State::new(event);
     }
 }
 
