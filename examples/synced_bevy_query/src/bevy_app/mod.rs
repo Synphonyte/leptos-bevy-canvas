@@ -1,5 +1,4 @@
 mod components;
-mod resources;
 mod setup;
 mod systems;
 
@@ -33,7 +32,6 @@ pub fn init_bevy_app(
                 ..default()
             }),
         MeshPickingPlugin,
-        // bevy_inspector_egui::quick::WorldInspectorPlugin::new(),
     ))
     .sync_leptos_signal_with_query(selected_query_duplex)
     .add_systems(Startup, (setup_scene,))

@@ -1,3 +1,5 @@
+.DS_Store
 target
 dist
 Cargo.lock
+.idea

@@ -13,6 +13,8 @@ Embed an idiomatic Bevy app inside your Leptos app.
 
 [Sync Bevy Queries ![Query Sync Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/synced_bevy_query.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/synced_bevy_query)
 
+[Sync Bevy States ![Loading Overlay Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/load_models_demo.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/loading_screen)
+
 ## Features
 
 - **Easy to use** - Simply embed your Bevy app inside your Leptos app with the
@@ -21,6 +23,7 @@ Embed an idiomatic Bevy app inside your Leptos app.
   your Bevy app or your Leptos app. It just gives you the tools for them to communicate.
 - **Events** - Send events in either or both directions between your Bevy app and your Leptos app.
 - **Resource signals** - Synchronize Bevy `Resource`s with `RwSignal`s in your Leptos app.
+- **State signals** - Synchronize Bevy `State`s with `RwSignal`s in your Leptos app.
 - **Query signals** - Synchronize Bevy `Query`s with `RwSignal`s in your Leptos app.
 
 ## Example

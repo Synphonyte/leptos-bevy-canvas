@@ -1,0 +1,34 @@
+[package]
+name = "loading_screen"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy-inspector-egui.workspace = true
+bevy_panorbit_camera = "0.28.0"
+bevy_web_asset = "0.11.0"
+console_error_panic_hook.workspace = true
+getrandom.workspace = true
+iyes_progress = { version = "0.14.0", features = ["assets"] }
+leptos.workspace = true
+leptos-bevy-canvas.workspace = true
+leptos-use.workspace = true
+rand_core.workspace = true
+uuid.workspace = true
+
+[dependencies.bevy]
+workspace = true
+features = [
+    "bevy_pbr",
+    "bevy_picking",
+    "bevy_window",
+    "bevy_winit",
+    "tonemapping_luts",
+    "webgl2",
+    "bevy_state",
+    "bevy_gltf",
+    "bevy_log",
+    "bevy_image",
+    "bevy_asset",
+    "png",
+]

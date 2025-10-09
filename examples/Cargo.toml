@@ -1,22 +1,17 @@
 [workspace]
 resolver = "2"
 
-members = ["unidir_events", "synced_bevy_query"]
+members = ["unidir_events", "synced_bevy_query", "loading_screen"]
 
 [workspace.dependencies]
 bevy = { version = "0.16", default-features = false }
-bevy-inspector-egui = "0.30"
-bevy_rand = { version = "0.9", features = ["wyrand"] }
+bevy-inspector-egui = "0.31"
 console_error_panic_hook = "0.1"
 getrandom = { version = "0.3.2", features = ["wasm_js"] }
 leptos = { version = "0.8.2", features = ["csr"] }
-leptos-bevy-canvas = { path = "../../leptos-bevy-canvas" }
-leptos-bevy-canvas-examples = { path = "." }
+leptos-bevy-canvas = { path = "../../leptos-bevy-canvas", features = ["bevy_state"]}
 leptos-use = "0.16"
 rand_core = "0.6"
-web-sys = "0.3"
-wasm-bindgen = "0.2"
-wasm-bindgen-test = "0.3.0"
 uuid = { version = "1.16.0", features = ["rng-getrandom"] }
 
 [package]
