@@ -5,6 +5,7 @@ pub enum Model {
     /// ![Source](https://science.nasa.gov/3d-resources/gateway-lunar-space-station/)
     GatewayCore,
     /// ![Source](https://sketchfab.com/3d-models/destructible-robot-highpoly-0f9c08f0d8d94f3a9938d4d8bf423f46)
+    /// ![License](https://creativecommons.org/licenses/by/4.0/)
     Robot,
 }
 
