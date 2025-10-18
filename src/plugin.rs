@@ -3,18 +3,18 @@ use bevy::prelude::*;
 pub struct LeptosBevyCanvasPlugin;
 impl Plugin for LeptosBevyCanvasPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<LeptosBevyCanvasCleanup>();
+        app.add_message::<LeptosBevyCanvasCleanup>();
         app.add_systems(First, cleanup);
     }
 }
 
-#[derive(Event, Debug)]
+#[derive(Message, Debug)]
 pub struct LeptosBevyCanvasCleanup;
 fn cleanup(
-    mut cleanup_events: EventReader<LeptosBevyCanvasCleanup>,
-    mut exit: EventWriter<AppExit>,
+    mut cleanup_messages: MessageReader<LeptosBevyCanvasCleanup>,
+    mut exit: MessageWriter<AppExit>,
 ) {
-    for _event in cleanup_events.read() {
+    for _ in cleanup_messages.read() {
         exit.write(AppExit::Success);
     }
 }

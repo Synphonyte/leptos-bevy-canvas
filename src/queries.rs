@@ -1,4 +1,4 @@
-use crate::events::BevyEventDuplex;
+use crate::messages::BevyMessageDuplex;
 use crate::signal_synced::{signal_synced, RwSignalSynced};
 use bevy::ecs::component::Mutable;
 use bevy::ecs::query::{QueryData, QueryFilter};
@@ -42,11 +42,11 @@ where
 pub trait QueryDataOwned<'q> {
     type Qdata: QueryData;
 
-    fn from_query_data<'a>(data: &<Self::Qdata as QueryData>::Item<'a>) -> Self;
+    fn from_query_data<'w, 's>(data: &<Self::Qdata as QueryData>::Item<'w, 's>) -> Self;
 
-    fn set_query_data<'a>(&self, data: &mut <Self::Qdata as QueryData>::Item<'a>);
+    fn set_query_data<'w, 's>(&self, data: &mut <Self::Qdata as QueryData>::Item<'w, 's>);
 
-    fn is_changed<'a>(data: &<Self::Qdata as QueryData>::Item<'a>) -> bool;
+    fn is_changed<'w, 's>(data: &<Self::Qdata as QueryData>::Item<'w, 's>) -> bool;
 }
 
 macro_rules! impl_as_query_data {
@@ -55,7 +55,7 @@ macro_rules! impl_as_query_data {
         impl<'q, $($name: bevy::prelude::Component<Mutability = Mutable> + Clone),*> QueryDataOwned<'q> for ($($name,)*) {
             type Qdata = ($(&'q mut $name,)*);
 
-            fn from_query_data<'a>(data: &<Self::Qdata as QueryData>::Item<'a>) -> Self {
+            fn from_query_data<'w, 's>(data: &<Self::Qdata as QueryData>::Item<'w, 's>) -> Self {
                 paste! {
                     let ($([<$name:lower>],)*) = data;
                     ($(
@@ -64,7 +64,7 @@ macro_rules! impl_as_query_data {
                 }
             }
 
-            fn set_query_data<'a>(&self, data: &mut <Self::Qdata as QueryData>::Item<'a>) {
+            fn set_query_data<'w, 's>(&self, data: &mut <Self::Qdata as QueryData>::Item<'w, 's>) {
                 paste! {
                     let ($([<$name:lower>],)*) = data;
                     let ($([<$name:lower _self>],)*) = self;
@@ -75,7 +75,7 @@ macro_rules! impl_as_query_data {
                 }
             }
 
-            fn is_changed<'a>(data: &<Self::Qdata as QueryData>::Item<'a>) -> bool {
+            fn is_changed<'w, 's>(data: &<Self::Qdata as QueryData>::Item<'w, 's>) -> bool {
                 paste! {
                     let ($([<$name:lower>],)*) = data;
                     $(
@@ -97,7 +97,7 @@ where
     for<'a> D: QueryDataOwned<'a>,
     F: QueryFilter,
 {
-    pub(crate) duplex: BevyEventDuplex<Option<D>>,
+    pub(crate) duplex: BevyMessageDuplex<Option<D>>,
     marker: PhantomData<F>,
 }
 

@@ -1,13 +1,14 @@
 use crate::bevy_app::components::*;
 use bevy::asset::Assets;
-use bevy::color::palettes::tailwind::*;
 use bevy::color::Color;
+use bevy::color::palettes::tailwind::*;
 use bevy::core_pipeline::Skybox;
+use bevy::ecs::error::BevyError;
+use bevy::light::PointLight;
 use bevy::math::Vec3;
-use bevy::pbr::{MeshMaterial3d, PointLight, StandardMaterial};
+use bevy::pbr::{MeshMaterial3d, StandardMaterial};
 use bevy::picking::Pickable;
 use bevy::prelude::*;
-use bevy::ecs::error::BevyError;
 use bevy::render::render_resource::Face;
 
 const CUBE_X: f32 = 4.0;
@@ -101,12 +102,12 @@ pub fn setup_scene(
             rotation: Quat::IDENTITY,
         },
     ));
-    
+
     Ok(())
 }
 
 pub fn select_on_click(
-    click: Trigger<Pointer<Click>>,
+    on_click: On<Pointer<Click>>,
     mut commands: Commands,
     prev_selected: Query<Entity, With<Selected>>,
 ) -> Result<(), BevyError> {
@@ -114,6 +115,6 @@ pub fn select_on_click(
         commands.entity(entity).remove::<Selected>();
     }
 
-    commands.entity(click.target()).insert(Selected);
+    commands.entity(on_click.entity).insert(Selected);
     Ok(())
 }

@@ -2,12 +2,13 @@ use bevy::asset::Assets;
 use bevy::color::palettes::tailwind::GRAY_700;
 use bevy::color::Color;
 use bevy::core_pipeline::Skybox;
+use bevy::ecs::error::BevyError;
+use bevy::light::PointLight;
 use bevy::math::Vec3;
-use bevy::pbr::{MeshMaterial3d, PointLight, StandardMaterial};
+use bevy::mesh::CylinderMeshBuilder;
+use bevy::pbr::{MeshMaterial3d, StandardMaterial};
 use bevy::picking::Pickable;
 use bevy::prelude::*;
-use bevy::render::mesh::CylinderMeshBuilder;
-use bevy::ecs::error::BevyError;
 
 pub const CAMERA_LOOK_AT: Vec3 = Vec3::new(0.0, 0.0, -0.2);
 
@@ -56,6 +57,6 @@ pub fn setup_scene(
             rotation: Quat::IDENTITY,
         },
     ));
-    
+
     Ok(())
 }

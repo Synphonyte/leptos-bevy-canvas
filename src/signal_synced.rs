@@ -1,4 +1,4 @@
-use crate::events::BevyEventDuplex;
+use crate::messages::BevyMessageDuplex;
 use crossbeam_channel::Sender;
 use leptos::prelude::guards::{Plain, ReadGuard};
 use leptos::prelude::*;
@@ -99,12 +99,12 @@ where
 
 // TODO : make sync_resource out of this with an `Into<UseRwSignal>` as input?
 
-/// Creates a pair of a `RwSignalSynced` and a `BevyEventDuplex`.
+/// Creates a pair of a `RwSignalSynced` and a `BevyMessageDuplex`.
 ///
-/// The first can be used just like a `RwSignal` in Leptos. The `BevyEventDuplex` that has to
+/// The first can be used just like a `RwSignal` in Leptos. The `BevyMessageDuplex` that has to
 /// be passed into the Bevy app where it will be used to sync the signal with a Bevy `Resource` or
 /// a `Query`.
-pub fn signal_synced<T>(initial_value: T) -> (RwSignalSynced<T>, BevyEventDuplex<T>)
+pub fn signal_synced<T>(initial_value: T) -> (RwSignalSynced<T>, BevyMessageDuplex<T>)
 where
     T: Send + Sync + Clone + 'static,
 {
@@ -123,8 +123,8 @@ where
             let rx = rx_b2l.clone();
 
             move |_| {
-                for event in rx.try_iter() {
-                    signal.set(event);
+                for message in rx.try_iter() {
+                    signal.set(message);
                 }
             }
         });
@@ -140,6 +140,6 @@ where
             rw_signal: signal,
             tx: StoredValue::new(tx_l2b),
         },
-        BevyEventDuplex::new(rx_l2b, tx_b2l),
+        BevyMessageDuplex::new(rx_l2b, tx_b2l),
     )
 }

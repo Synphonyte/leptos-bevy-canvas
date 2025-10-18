@@ -1,7 +1,7 @@
-use crate::events::BevyEventDuplex;
+use crate::messages::BevyMessageDuplex;
 use crate::prelude::QueryDataOwned;
 use crate::traits::{HasReceiver, HasSender};
-use bevy::ecs::event::EventId;
+use bevy::ecs::message::MessageId;
 use bevy::ecs::query::QueryFilter;
 use bevy::prelude::*;
 
@@ -13,53 +13,53 @@ pub struct SyncSignalResourceSet;
 pub struct SyncSignalStateSet;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
-pub struct ImportLeptosEventSet;
+pub struct ImportLeptosMessageSet;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
-pub struct ExportLeptosEventSet;
+pub struct ExportLeptosMessageSet;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub struct SyncQuerySet;
 
-/// Keeps track of what Leptos event have been imported into Bevy to prevent infinite loops.
+/// Keeps track of what Leptos message have been imported into Bevy to prevent infinite loops.
 #[derive(Resource, Deref, DerefMut)]
-pub struct ImportedEventIds<E: Event>(Vec<EventId<E>>);
+pub struct ImportedMessageIds<M: Message>(Vec<MessageId<M>>);
 
-impl<E: Event> Default for ImportedEventIds<E> {
+impl<M: Message> Default for ImportedMessageIds<M> {
     fn default() -> Self {
         Self(Vec::with_capacity(4))
     }
 }
 
-/// Imports an event from Leptos and writes it as a Bevy event.
-pub fn import_and_send_leptos_events<R, E>(
+/// Imports a message from Leptos and writes it as a Bevy message.
+pub fn import_and_send_leptos_messages<R, M>(
     rx: Res<R>,
-    mut imported_event_ids: ResMut<ImportedEventIds<E>>,
-    mut event_writer: EventWriter<E>,
+    mut imported_message_ids: ResMut<ImportedMessageIds<M>>,
+    mut message_writer: MessageWriter<M>,
 ) where
-    R: HasReceiver<E> + Resource,
-    E: Event,
+    R: HasReceiver<M> + Resource,
+    M: Message,
 {
-    imported_event_ids.clear();
+    imported_message_ids.clear();
 
-    for event in rx.rx().try_iter() {
-        let event_id = event_writer.write(event);
-        imported_event_ids.push(event_id);
+    for message in rx.rx().try_iter() {
+        let message_id = message_writer.write(message);
+        imported_message_ids.push(message_id);
     }
 }
 
-/// Exports an event from Bevy to Leptos.
-pub fn read_and_export_leptos_events<S, E>(
+/// Exports a message from Bevy to Leptos.
+pub fn read_and_export_leptos_messages<S, M>(
     tx: Res<S>,
-    imported_event_ids: Res<ImportedEventIds<E>>,
-    mut event_reader: EventReader<E>,
+    imported_message_ids: Res<ImportedMessageIds<M>>,
+    mut message_reader: MessageReader<M>,
 ) where
-    S: HasSender<E> + Resource,
-    E: Event + Clone,
+    S: HasSender<M> + Resource,
+    M: Message + Clone,
 {
-    for (event, id) in event_reader.read_with_id() {
-        if !imported_event_ids.contains(&id) {
-            tx.tx().send(event.clone()).unwrap();
+    for (message, id) in message_reader.read_with_id() {
+        if !imported_message_ids.contains(&id) {
+            tx.tx().send(message.clone()).unwrap();
         }
     }
 }
@@ -97,7 +97,7 @@ where
 
 /// Synchronizes a Bevy query's `.get_single_mut()` with a Leptos signal.
 pub fn sync_query<D, F>(
-    duplex: Res<BevyEventDuplex<Option<D>>>,
+    duplex: Res<BevyMessageDuplex<Option<D>>>,
     mut query: Query<<D as QueryDataOwned>::Qdata, F>,
     mut prev_some: Local<bool>,
 ) where
@@ -118,9 +118,9 @@ pub fn sync_query<D, F>(
         let item = item.map(|item| D::from_query_data(&item));
         duplex.tx().send(item).unwrap();
     } else {
-        for event in duplex.rx().try_iter() {
-            if let (Some(event), Some(item)) = (event, &mut item) {
-                event.set_query_data(item);
+        for message in duplex.rx().try_iter() {
+            if let (Some(message), Some(item)) = (message, &mut item) {
+                message.set_query_data(item);
             }
         }
     }

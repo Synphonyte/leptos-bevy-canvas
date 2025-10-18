@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use leptos::prelude::*;
 
 use crate::{
-    events::{event_l2b, LeptosChannelEventSender},
+    messages::{message_l2b, LeptosChannelMessageSender},
     plugin::{LeptosBevyCanvasCleanup, LeptosBevyCanvasPlugin},
     prelude::LeptosBevyApp,
 };
@@ -17,12 +17,12 @@ pub fn BevyCanvas(
     #[prop(into, default = "bevy_canvas".to_string())]
     canvas_id: String,
 ) -> impl IntoView {
-    let (shutdown_canvas, set_shutdown_canvas) = event_l2b::<LeptosBevyCanvasCleanup>();
+    let (shutdown_canvas, set_shutdown_canvas) = message_l2b::<LeptosBevyCanvasCleanup>();
 
     request_animation_frame(move || {
         let mut app = init();
         app.add_plugins(LeptosBevyCanvasPlugin)
-            .import_event_from_leptos(set_shutdown_canvas);
+            .import_message_from_leptos(set_shutdown_canvas);
         app.run();
     });
 

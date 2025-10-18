@@ -6,23 +6,23 @@ use bevy::prelude::*;
 
 /// Adds synchronization methods to the Bevy app
 pub trait LeptosBevyApp {
-    /// Imports an event from Leptos into the Bevy app. Takes the Bevy event receiver as argument.
-    fn import_event_from_leptos<R, E>(&mut self, bevy_rx: R) -> &mut Self
+    /// Imports a message from Leptos into the Bevy app. Takes the Bevy message receiver as argument.
+    fn import_message_from_leptos<R, M>(&mut self, bevy_rx: R) -> &mut Self
     where
-        E: Event,
-        R: HasReceiver<E> + Resource;
+        M: Message,
+        R: HasReceiver<M> + Resource;
 
-    /// Exports an event from Bevy to Leptos. Takes the Bevy event sender as argument.
-    fn export_event_to_leptos<S, E>(&mut self, bevy_tx: S) -> &mut Self
+    /// Exports an message from Bevy to Leptos. Takes the Bevy message sender as argument.
+    fn export_message_to_leptos<S, M>(&mut self, bevy_tx: S) -> &mut Self
     where
-        E: Event + Clone,
-        S: HasSender<E> + Resource;
+        M: Message + Clone,
+        S: HasSender<M> + Resource;
 
-    /// Adds duplex event handling between Bevy and Leptos. Takes the Bevy event receiver/sender as argument.
-    fn add_duplex_leptos_event<D, E>(&mut self, bevy_duplex: D) -> &mut Self
+    /// Adds duplex message handling between Bevy and Leptos. Takes the Bevy message receiver/sender as argument.
+    fn add_duplex_leptos_message<D, M>(&mut self, bevy_duplex: D) -> &mut Self
     where
-        E: Event + Clone,
-        D: HasReceiver<E> + HasSender<E> + Resource;
+        M: Message + Clone,
+        D: HasReceiver<M> + HasSender<M> + Resource;
 
     /// Adds resource syncing between Bevy and Leptos. Takes the Bevy resource receiver/sender as argument.
     fn sync_leptos_signal_with_resource<D, R>(&mut self, bevy_duplex: D) -> &mut Self
@@ -45,48 +45,48 @@ pub trait LeptosBevyApp {
 }
 
 impl LeptosBevyApp for App {
-    fn import_event_from_leptos<R, E>(&mut self, bevy_rx: R) -> &mut Self
+    fn import_message_from_leptos<R, M>(&mut self, bevy_rx: R) -> &mut Self
     where
-        E: Event,
-        R: HasReceiver<E> + Resource,
+        M: Message,
+        R: HasReceiver<M> + Resource,
     {
         self.insert_resource(bevy_rx)
-            .add_event::<E>()
-            .init_resource::<ImportedEventIds<E>>()
+            .add_message::<M>()
+            .init_resource::<ImportedMessageIds<M>>()
             .add_systems(
                 PreUpdate,
-                import_and_send_leptos_events::<R, E>.in_set(ImportLeptosEventSet),
+                import_and_send_leptos_messages::<R, M>.in_set(ImportLeptosMessageSet),
             )
     }
 
-    fn export_event_to_leptos<R, E>(&mut self, bevy_tx: R) -> &mut Self
+    fn export_message_to_leptos<R, M>(&mut self, bevy_tx: R) -> &mut Self
     where
-        E: Event + Clone,
-        R: HasSender<E> + Resource,
+        M: Message + Clone,
+        R: HasSender<M> + Resource,
     {
         self.insert_resource(bevy_tx)
-            .add_event::<E>()
-            .init_resource::<ImportedEventIds<E>>()
+            .add_message::<M>()
+            .init_resource::<ImportedMessageIds<M>>()
             .add_systems(
                 PostUpdate,
-                read_and_export_leptos_events::<R, E>.in_set(ExportLeptosEventSet),
+                read_and_export_leptos_messages::<R, M>.in_set(ExportLeptosMessageSet),
             )
     }
 
-    fn add_duplex_leptos_event<D, E>(&mut self, bevy_duplex: D) -> &mut Self
+    fn add_duplex_leptos_message<D, M>(&mut self, bevy_duplex: D) -> &mut Self
     where
-        E: Event + Clone,
-        D: HasReceiver<E> + HasSender<E> + Resource,
+        M: Message + Clone,
+        D: HasReceiver<M> + HasSender<M> + Resource,
     {
         self.insert_resource(bevy_duplex)
-            .add_event::<E>()
+            .add_message::<M>()
             .add_systems(
                 PreUpdate,
-                import_and_send_leptos_events::<D, E>.in_set(ImportLeptosEventSet),
+                import_and_send_leptos_messages::<D, M>.in_set(ImportLeptosMessageSet),
             )
             .add_systems(
                 PostUpdate,
-                read_and_export_leptos_events::<D, E>.in_set(ExportLeptosEventSet),
+                read_and_export_leptos_messages::<D, M>.in_set(ExportLeptosMessageSet),
             )
     }
 
@@ -95,8 +95,8 @@ impl LeptosBevyApp for App {
         R: Resource + Clone,
         D: HasReceiver<R> + HasSender<R> + Resource,
     {
-        for event in bevy_duplex.rx().try_iter() {
-            self.insert_resource(event);
+        for message in bevy_duplex.rx().try_iter() {
+            self.insert_resource(message);
         }
 
         self.insert_resource(bevy_duplex).add_systems(
@@ -111,8 +111,8 @@ impl LeptosBevyApp for App {
         S: bevy::state::state::FreelyMutableState + Clone,
         D: HasReceiver<S> + HasSender<S> + Resource,
     {
-        for event in bevy_duplex.rx().try_iter() {
-            self.insert_state(event);
+        for message in bevy_duplex.rx().try_iter() {
+            self.insert_state(message);
         }
 
         self.insert_resource(bevy_duplex)

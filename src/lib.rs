@@ -1,6 +1,6 @@
 //! Embed an idiomatic Bevy app inside your Leptos app.
 //!
-//! [Send and Receive Events ![Events Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/unidir_events.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/unidir_events)
+//! [Send and Receive Messages ![Messages Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/unidir_messages.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/unidir_messages)
 //!
 //! [Sync Bevy Queries ![Query Sync Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/synced_bevy_query.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/synced_bevy_query)
 //!
@@ -10,7 +10,7 @@
 //!   [`BevyCanvas`](fn@crate::prelude::BevyCanvas) component.
 //! - **Idiomatic** - This crate doesn't want you to do anything differently in the way you write
 //!   your Bevy app or your Leptos app. It just gives you the tools for them to communicate.
-//! - **Events** - Send events in either or both directions between your Bevy app and your Leptos app.
+//! - **Messages** - Send messages in either or both directions between your Bevy app and your Leptos app.
 //! - **Resource signals** - Synchronize Bevy `Resource`s with `RwSignal`s in your Leptos app.
 //! - **Query signals** - Synchronize Bevy `Query`s with `RwSignal`s in your Leptos app.
 //!
@@ -21,8 +21,8 @@
 //! use leptos::prelude::*;
 //! use leptos_bevy_canvas::prelude::*;
 //!
-//! #[derive(Event)]
-//! pub struct TextEvent {
+//! #[derive(Message)]
+//! pub struct TextMessage {
 //!     pub text: String,
 //! }
 //!
@@ -30,12 +30,12 @@
 //! pub fn App() -> impl IntoView {
 //!     // This initializes a sender for the Leptos app and
 //!     // a receiver for the Bevy app
-//!     let (text_event_sender, bevy_text_receiver) = event_l2b::<TextEvent>();
+//!     let (text_message_sender, bevy_text_receiver) = message_l2b::<TextMessage>();
 //!
 //!     let on_input = move |evt| {
-//!         // send the event over to Bevy
-//!         text_event_sender
-//!             .send(TextEvent { text: event_target_value(&evt) })
+//!         // send the message over to Bevy
+//!         text_message_sender
+//!             .send(TextMessage { text: event_target_value(&evt) })
 //!             .ok();
 //!     };
 //!
@@ -55,17 +55,17 @@
 //!     }
 //! }
 //!
-//! // In Bevy it ends up just as a normal event
+//! // In Bevy it ends up just as a normal message
 //! pub fn set_text(
-//!     mut event_reader: EventReader<TextEvent>,
+//!     mut message_reader: MessageReader<TextMessage>,
 //! ) {
-//!     for event in event_reader.read() {
-//!         // do something with the event
+//!     for message in message_reader.read() {
+//!         // do something with the message
 //!     }
 //! }
 //!
 //! // This initializes a normal Bevy app
-//! fn init_bevy_app( text_receiver: BevyEventReceiver<TextEvent>) -> App {
+//! fn init_bevy_app( text_receiver: BevyMessageReceiver<TextMessage>) -> App {
 //!     let mut app = App::new();
 //!     app
 //!         .add_plugins(
@@ -79,8 +79,8 @@
 //!                 ..default()
 //!             }),
 //!         )
-//!         // import the event here into Bevy
-//!         .import_event_from_leptos(text_receiver)
+//!         // import the message here into Bevy
+//!         .import_message_from_leptos(text_receiver)
 //!         .add_systems(Update, set_text);
 //!
 //!     app
@@ -97,8 +97,8 @@
 //! | 0.1, 0.2      | 0.7                       | 0.15                    |
 
 mod app_extension;
-mod events;
 mod leptos_component;
+mod messages;
 mod plugin;
 mod queries;
 mod signal_synced;
@@ -108,8 +108,8 @@ mod utils;
 
 pub mod prelude {
     pub use crate::app_extension::*;
-    pub use crate::events::*;
     pub use crate::leptos_component::*;
+    pub use crate::messages::*;
     pub use crate::queries::*;
     pub use crate::signal_synced::*;
 }

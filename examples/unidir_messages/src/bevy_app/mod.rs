@@ -6,7 +6,7 @@ mod systems;
 use crate::bevy_app::resources::*;
 use crate::bevy_app::setup::setup_scene;
 use crate::bevy_app::systems::*;
-use crate::events::{ClickEvent, TextEvent};
+use crate::messages::{ClickMessage, TextMessage};
 use crate::{RENDER_HEIGHT, RENDER_WIDTH};
 use bevy::asset::AssetMetaCheck;
 use bevy::prelude::*;
@@ -14,8 +14,8 @@ use bevy::window::WindowResolution;
 use leptos_bevy_canvas::prelude::*;
 
 pub fn init_bevy_app(
-    text_receiver: BevyEventReceiver<TextEvent>,
-    click_sender: BevyEventSender<ClickEvent>,
+    text_receiver: BevyMessageReceiver<TextMessage>,
+    click_sender: BevyMessageSender<ClickMessage>,
 ) -> App {
     let mut app = App::new();
     app.add_plugins((
@@ -39,8 +39,8 @@ pub fn init_bevy_app(
     ))
     .init_resource::<CurrentText>()
     .init_resource::<SelectedGlyph>()
-    .import_event_from_leptos(text_receiver)
-    .export_event_to_leptos(click_sender)
+    .import_message_from_leptos(text_receiver)
+    .export_message_to_leptos(click_sender)
     .add_systems(Startup, (setup_scene,))
     .add_systems(Update, (update_text,));
 

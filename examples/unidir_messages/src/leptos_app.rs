@@ -1,5 +1,5 @@
 use crate::bevy_app::init_bevy_app;
-use crate::events::{ClickEvent, TextEvent};
+use crate::messages::{ClickMessage, TextMessage};
 use crate::{RENDER_HEIGHT, RENDER_WIDTH};
 use leptos::prelude::Set;
 use leptos::prelude::*;
@@ -7,7 +7,7 @@ use leptos_bevy_canvas::prelude::*;
 use leptos_use::use_debounce_fn;
 
 #[derive(Copy, Clone)]
-pub enum EventDirection {
+pub enum MessageDirection {
     None,
     LeptosToBevy,
     BevyToLeptos,
@@ -15,28 +15,28 @@ pub enum EventDirection {
 
 #[component]
 pub fn App() -> impl IntoView {
-    let (text_event_sender, text_receiver) = event_l2b::<TextEvent>();
-    let (click_event_receiver, click_event_sender) = event_b2l::<ClickEvent>();
+    let (text_message_sender, text_receiver) = message_l2b::<TextMessage>();
+    let (click_message_receiver, click_message_sender) = message_b2l::<ClickMessage>();
 
     let (text, set_text) = signal(String::new());
-    let (event_str, set_event_str) = signal(String::new());
-    let (event_direction, set_event_direction) = signal(EventDirection::None);
+    let (message_str, set_message_str) = signal(String::new());
+    let (message_direction, set_message_direction) = signal(MessageDirection::None);
 
     let on_input = move |text: String| {
         set_text.set(text.clone());
 
-        let text_event = TextEvent { text };
+        let text_message = TextMessage { text };
 
-        set_event_str.set(format!("{:#?}", text_event));
-        set_event_direction.set(EventDirection::LeptosToBevy);
+        set_message_str.set(format!("{:#?}", text_message));
+        set_message_direction.set(MessageDirection::LeptosToBevy);
 
-        text_event_sender.send(text_event).ok();
+        text_message_sender.send(text_message).ok();
     };
 
     Effect::new(move || {
-        if let Some(event) = click_event_receiver.get() {
-            set_event_str.set(format!("{:#?}", event));
-            set_event_direction.set(EventDirection::BevyToLeptos);
+        if let Some(message) = click_message_receiver.get() {
+            set_message_str.set(format!("{:#?}", message));
+            set_message_direction.set(MessageDirection::BevyToLeptos);
         }
     });
 
@@ -50,7 +50,7 @@ pub fn App() -> impl IntoView {
                     style:max-height=format!("{}px", RENDER_HEIGHT)
                 >
                     <BevyCanvas
-                        init=move || { init_bevy_app(text_receiver, click_event_sender) }
+                        init=move || { init_bevy_app(text_receiver, click_message_sender) }
                         {..}
                         width=RENDER_WIDTH
                         height=RENDER_HEIGHT
@@ -58,12 +58,12 @@ pub fn App() -> impl IntoView {
                 </div>
             </Frame>
 
-            <EventDisplay event_str event_direction />
+            <MessageDisplay message_str message_direction />
 
             <Frame class="border-blue-500 bg-blue-500/5 max-w-[200px]">
                 <h2 class="text-xl font-bold text-blue-500 relative top-[-10px]">Leptos</h2>
                 <TextInput on_input=on_input />
-                <TextDisplay text click_event_receiver />
+                <TextDisplay text click_message_receiver />
             </Frame>
         </div>
     }
@@ -72,7 +72,7 @@ pub fn App() -> impl IntoView {
 #[component]
 pub fn TextDisplay(
     text: ReadSignal<String>,
-    click_event_receiver: LeptosEventReceiver<ClickEvent>,
+    click_message_receiver: LeptosMessageReceiver<ClickMessage>,
 ) -> impl IntoView {
     view! {
         <div class="mt-3 text-sm font-medium text-white">
@@ -84,8 +84,8 @@ pub fn TextDisplay(
                 key=|(i, _)| *i
                 children=move |(i, c)| {
                     let class = move || {
-                        let class = if let Some(event) = click_event_receiver.get() {
-                            if event.char_index == i { "top-[-5px]" } else { "top-0" }
+                        let class = if let Some(message) = click_message_receiver.get() {
+                            if message.char_index == i { "top-[-5px]" } else { "top-0" }
                         } else {
                             "top-0"
                         };
@@ -103,57 +103,57 @@ pub fn TextDisplay(
 }
 
 #[component]
-pub fn EventDisplay(
-    event_str: ReadSignal<String>,
-    event_direction: ReadSignal<EventDirection>,
+pub fn MessageDisplay(
+    message_str: ReadSignal<String>,
+    message_direction: ReadSignal<MessageDirection>,
 ) -> impl IntoView {
-    let (event_display_class, set_event_display_class) = signal("opacity-0".to_string());
+    let (message_display_class, set_message_display_class) = signal("opacity-0".to_string());
 
-    let reset_event_display_class = move || {
-        set_event_display_class
+    let reset_message_display_class = move || {
+        set_message_display_class
             .set("opacity-30 transition-opacity duration-1000 ease-in".to_string())
     };
-    let debounced_reset_event_display_class = use_debounce_fn(reset_event_display_class, 500.0);
-    let activate_event_display = move || {
-        set_event_display_class.set("opacity-100".to_string());
-        debounced_reset_event_display_class();
+    let debounced_reset_message_display_class = use_debounce_fn(reset_message_display_class, 500.0);
+    let activate_message_display = move || {
+        set_message_display_class.set("opacity-100".to_string());
+        debounced_reset_message_display_class();
     };
 
     Effect::watch(
-        move || event_str.track(),
+        move || message_str.track(),
         move |_, _, _| {
-            activate_event_display();
+            activate_message_display();
         },
         false,
     );
 
     view! {
         <div class="flex-1 px-5 relative">
-            <EventDirectionIndicator event_direction />
+            <MessageDirectionIndicator message_direction />
             <pre class=move || {
                 format!(
                     "overflow-x-auto bg-gray-700 border border-gray-600 rounded p-3 absolute top-[30px] max-w-[80%] left-1/2 -translate-x-1/2 {}",
-                    event_display_class.get(),
+                    message_display_class.get(),
                 )
             }>
-                <code>{event_str}</code>
+                <code>{message_str}</code>
             </pre>
         </div>
     }
 }
 
 #[component]
-pub fn EventDirectionIndicator(event_direction: ReadSignal<EventDirection>) -> impl IntoView {
-    let color = Signal::derive(move || match event_direction.get() {
-        EventDirection::LeptosToBevy => "rgb(59, 130, 246)",
-        EventDirection::BevyToLeptos => "rgb(239, 68, 68)",
-        EventDirection::None => "transparent",
+pub fn MessageDirectionIndicator(message_direction: ReadSignal<MessageDirection>) -> impl IntoView {
+    let color = Signal::derive(move || match message_direction.get() {
+        MessageDirection::LeptosToBevy => "rgb(59, 130, 246)",
+        MessageDirection::BevyToLeptos => "rgb(239, 68, 68)",
+        MessageDirection::None => "transparent",
     });
 
-    let transform = Signal::derive(move || match event_direction.get() {
-        EventDirection::LeptosToBevy => "scale(1, 1)",
-        EventDirection::BevyToLeptos => "scale(-1, 1)",
-        EventDirection::None => "scale(1, 1)",
+    let transform = Signal::derive(move || match message_direction.get() {
+        MessageDirection::LeptosToBevy => "scale(1, 1)",
+        MessageDirection::BevyToLeptos => "scale(-1, 1)",
+        MessageDirection::None => "scale(1, 1)",
     });
 
     // svg arrow

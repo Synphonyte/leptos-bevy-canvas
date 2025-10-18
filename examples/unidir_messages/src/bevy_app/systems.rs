@@ -1,29 +1,29 @@
 use crate::bevy_app::components::CharIndex;
 use crate::bevy_app::resources::*;
 use crate::bevy_app::setup::CAMERA_LOOK_AT;
-use crate::events::{ClickEvent, TextEvent};
+use crate::messages::{ClickMessage, TextMessage};
 use bevy::asset::{Assets, RenderAssetUsages};
 use bevy::color::palettes::tailwind::GREEN_100;
 use bevy::color::Color;
 use bevy::ecs::error::BevyError;
 use bevy::math::{Mat4, Vec3};
+use bevy::mesh::PrimitiveTopology;
 use bevy::pbr::{MeshMaterial3d, StandardMaterial};
 use bevy::prelude::*;
-use bevy::render::mesh::PrimitiveTopology;
 use meshtext::{Face, Glyph, MeshGenerator, MeshText};
 
 const LETTER_Y_ANGLE_STEP: f32 = 0.08;
 
 pub fn update_text(
     mut commands: Commands,
-    mut event_reader: EventReader<TextEvent>,
+    mut message_reader: MessageReader<TextMessage>,
     mut camera_query: Query<&mut Transform, With<Camera3d>>,
     mut current_text: ResMut<CurrentText>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut selected_glyph: ResMut<SelectedGlyph>,
 ) -> Result<(), BevyError> {
-    for event in event_reader.read() {
+    for message in message_reader.read() {
         let transform_step: Transform =
             Transform::from_rotation(Quat::from_rotation_y(LETTER_Y_ANGLE_STEP));
 
@@ -41,16 +41,16 @@ pub fn update_text(
                 Transform::from_translation(camera_pos).looking_at(CAMERA_LOOK_AT, Vec3::Y);
         }
 
-        for (i, ((existing_glyph, event_glyph), existing_glyph_entity)) in current_text
+        for (i, ((existing_glyph, message_glyph), existing_glyph_entity)) in current_text
             .text
             .chars()
-            .zip(event.text.chars())
+            .zip(message.text.chars())
             .zip(current_text.glyph_entities.iter().cloned())
             .enumerate()
         {
-            if existing_glyph != event_glyph {
+            if existing_glyph != message_glyph {
                 let new_glyph_entity = spawn_letter(
-                    event_glyph,
+                    message_glyph,
                     i,
                     transform,
                     &mut commands,
@@ -68,15 +68,15 @@ pub fn update_text(
             transform = transform_step * transform;
         }
 
-        let diff = current_text.text.len() as i32 - event.text.len() as i32;
+        let diff = current_text.text.len() as i32 - message.text.len() as i32;
 
         if diff > 0 {
-            for entity in current_text.glyph_entities.iter().skip(event.text.len()) {
+            for entity in current_text.glyph_entities.iter().skip(message.text.len()) {
                 commands.entity(*entity).despawn();
             }
         } else if diff < 0 {
             let mut i = current_text.text.len();
-            for glyph in event.text.chars().skip(i) {
+            for glyph in message.text.chars().skip(i) {
                 let glyph_transform = if let SelectedGlyph::Some { index, .. } = *selected_glyph {
                     if index == i {
                         let mut t = transform.clone();
@@ -112,7 +112,7 @@ pub fn update_text(
         }
 
         current_text.glyph_entities = new_glyph_entites;
-        current_text.text = event.text.clone();
+        current_text.text = message.text.clone();
     }
     Ok(())
 }
@@ -166,13 +166,13 @@ fn spawn_letter(
 }
 
 fn on_char_click(
-    trigger: Trigger<Pointer<Pressed>>,
+    on_pointer_press: On<Pointer<Press>>,
     index_query: Query<&CharIndex>,
     mut transform_query: Query<&mut Transform>,
-    mut event_writer: EventWriter<ClickEvent>,
+    mut message_writer: MessageWriter<ClickMessage>,
     mut selected_glyph: ResMut<SelectedGlyph>,
 ) -> Result<(), BevyError> {
-    let entity = trigger.target();
+    let entity = on_pointer_press.entity;
 
     if let Ok(index) = index_query.get(entity) {
         let index = **index;
@@ -189,7 +189,7 @@ fn on_char_click(
             transform.translation.y = 0.5;
         }
 
-        event_writer.write(ClickEvent { char_index: index });
+        message_writer.write(ClickMessage { char_index: index });
     }
     Ok(())
 }

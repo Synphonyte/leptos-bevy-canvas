@@ -1,12 +1,12 @@
 mod bevy_app;
-mod events;
 mod leptos_app;
+mod messages;
 
 use crate::leptos_app::App;
 use leptos::prelude::mount_to_body;
 
-pub const RENDER_WIDTH: f32 = 600.0;
-pub const RENDER_HEIGHT: f32 = 500.0;
+pub const RENDER_WIDTH: u32 = 600;
+pub const RENDER_HEIGHT: u32 = 500;
 
 fn main() {
     console_error_panic_hook::set_once();
