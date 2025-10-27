@@ -1,7 +1,7 @@
 [package]
 name = "loading_screen"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 bevy-inspector-egui.workspace = true
@@ -18,7 +18,6 @@ uuid.workspace = true
 workspace = true
 features = [
   "bevy_pbr",
-  "bevy_picking",
   "bevy_window",
   "bevy_winit",
   "tonemapping_luts",
@@ -31,4 +30,6 @@ features = [
   "png",
   "http",
   "https",
+  "web",
+  "reflect_auto_register",
 ]

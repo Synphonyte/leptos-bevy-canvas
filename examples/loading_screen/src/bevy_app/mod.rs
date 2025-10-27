@@ -9,6 +9,7 @@ use crate::bevy_app::setup::setup_scene;
 pub use crate::bevy_app::states::AppState;
 use crate::bevy_app::systems::*;
 use crate::{RENDER_HEIGHT, RENDER_WIDTH};
+use bevy::asset::io::web::WebAssetPlugin;
 use bevy::asset::AssetMetaCheck;
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
@@ -32,6 +33,9 @@ pub fn init_bevy_app(bevy_loading_state: BevyMessageDuplex<AppState>) -> App {
                     ..default()
                 }),
                 ..default()
+            })
+            .set(WebAssetPlugin {
+                silence_startup_warning: true,
             }),
         // bevy_inspector_egui::bevy_egui::EguiPlugin {
         //     enable_multipass_for_primary_context: true,
