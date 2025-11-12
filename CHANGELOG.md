@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes 🛠
 
 - Updated to Bevy 0.17
+- Renamed `...Event...` to `...Message...` to comply with Bevy's new naming conventions
 
 ### New Features 🎉
 
