@@ -13,7 +13,7 @@ Embed an idiomatic Bevy app inside your Leptos app.
 
 [Sync Bevy Queries ![Query Sync Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/synced_bevy_query.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/synced_bevy_query)
 
-[Sync Bevy States ![State Sync Loading Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/loading_screen.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/loading_screen)
+<!-- [Sync Bevy States ![State Sync Loading Demo](https://media.githubusercontent.com/media/Synphonyte/leptos-bevy-canvas/refs/heads/main/docs/loading_screen.webp)](https://github.com/Synphonyte/leptos-bevy-canvas/tree/main/examples/loading_screen) -->
 
 ## Features
 
