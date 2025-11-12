@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `RwSignalSynced` now implements `Write` and `Copy` + `Clone`
 - Add synced single queries via `single_query_signal()`
+- Added example to show snychronizing states and loading indicator.
 
 
 ## [0.1.0] - 2024-12-03
