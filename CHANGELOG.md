@@ -3,6 +3,20 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-11-12
+
+### Breaking Changes 🛠
+
+- Updated to Bevy 0.17
+
+### New Features 🎉
+
+- The canvas components are now properly cleaned up (thanks to @urothis).
+- You can now synchronize Bevy states with Leptos signals (enabled by feature `bevy_state`)
+
+### Special thanks to our sponsor
+- @benwis
+
 ## [0.3.0] - 2025-06-12
 
 ### Breaking Changes 🛠

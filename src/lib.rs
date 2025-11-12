@@ -13,6 +13,7 @@
 //! - **Messages** - Send messages in either or both directions between your Bevy app and your Leptos app.
 //! - **Resource signals** - Synchronize Bevy `Resource`s with `RwSignal`s in your Leptos app.
 //! - **Query signals** - Synchronize Bevy `Query`s with `RwSignal`s in your Leptos app.
+//! - **State signals** - Synchronize Bevy `State`s with `RwSignal`s in your Leptos app.
 //!
 //! # Example
 //!
@@ -93,6 +94,7 @@
 //!
 //! | Crate version | Compatible Leptos version | Compatible Bevy version |
 //! |---------------|---------------------------|-------------------------|
+//! | 0.4           | 0.8                       | 0.17                    |
 //! | 0.3           | 0.8                       | 0.16                    |
 //! | 0.1, 0.2      | 0.7                       | 0.15                    |
 
