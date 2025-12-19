@@ -14,7 +14,7 @@ repository = "https://github.com/Synphonyte/leptos-bevy-canvas"
 bevy = { version = "0.17", default-features = false }
 crossbeam-channel = "0.5"
 leptos = "0.8"
-leptos-use = { version = "0.16", default-features = false, features = [
+leptos-use = { version = "0.17", default-features = false, features = [
   "use_raf_fn",
 ] }
 paste = "1.0.15"
