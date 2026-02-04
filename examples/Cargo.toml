@@ -4,16 +4,16 @@ resolver = "2"
 members = ["unidir_messages", "synced_bevy_query", "loading_screen"]
 
 [workspace.dependencies]
-bevy = { version = "0.17", default-features = false }
-bevy-inspector-egui = "0.34"
-bevy_panorbit_camera = "0.30"
+bevy = { version = "0.18", default-features = false }
+bevy-inspector-egui = "0.36"
+bevy_panorbit_camera = "0.34"
 console_error_panic_hook = "0.1"
 getrandom = { version = "0.3", features = ["wasm_js"] }
 leptos = { version = "0.8", features = ["csr"] }
 leptos-bevy-canvas = { path = "../../leptos-bevy-canvas", features = [
   "bevy_state",
 ] }
-leptos-use = "0.16"
+leptos-use = "0.18"
 rand_core = "0.9"
 uuid = { version = "1.18.1", features = ["rng-getrandom"] }
 
