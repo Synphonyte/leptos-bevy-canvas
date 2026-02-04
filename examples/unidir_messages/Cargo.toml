@@ -15,11 +15,11 @@ getrandom.workspace = true
 [dependencies.bevy]
 workspace = true
 features = [
-  "bevy_mesh_picking_backend",
   "bevy_pbr",
   "bevy_picking",
   "bevy_window",
   "bevy_winit",
+  "mesh_picking",
   "tonemapping_luts",
   "webgl2",
   "web",
