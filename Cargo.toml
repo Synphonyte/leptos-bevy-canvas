@@ -1,6 +1,6 @@
 [package]
 name = "leptos-bevy-canvas"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 categories = ["gui", "web-programming", "rendering", "graphics", "wasm"]
 description = "Embed an idiomatic Bevy app inside your Leptos app with ease."
