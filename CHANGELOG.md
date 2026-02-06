@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-02-05
+
+### Breaking Changes 🛠
+
+- Updated to Bevy 0.18 (thanks to @quaintsorcery)
+- Updated to Leptos-Use 0.18.0 (thanks to @quaintsorcery)
+
+### Special thanks to our sponsor
+- @benwis
+
 ## [0.4.0] - 2025-11-12
 
 ### Breaking Changes 🛠

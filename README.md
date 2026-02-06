@@ -105,6 +105,7 @@ Please check the examples to see how to synchronize a `Resource` or a `Query`.
 
 | Crate version | Compatible Leptos version | Compatible Bevy version |
 |---------------|---------------------------|-------------------------|
+| 0.5           | 0.8                       | 0.18                    |
 | 0.4           | 0.8                       | 0.17                    |
 | 0.3           | 0.8                       | 0.16                    |
 | 0.1, 0.2      | 0.7                       | 0.15                    |
