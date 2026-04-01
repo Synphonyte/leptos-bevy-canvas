@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.2] - 2026-04-01
+
+### Fix 🔨
+
+- Changed the way that states are synchronized so that Bevy triggers OnEnter and OnExit correctly (thanks to @guzuomuse).
+
+### Special thanks to our sponsor
+- @benwis
+
 ## [0.5.1] - 2026-03-26
 
 ### Fix 🔨
