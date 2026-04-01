@@ -81,20 +81,21 @@ where
 
 /// Takes care of synchronizing a state between Bevy and a Leptos signal
 #[cfg(feature = "bevy_state")]
-pub fn sync_signal_state<D, S>(mut state: ResMut<State<S>>, sync: Res<D>)
-where
+pub fn sync_signal_state<D, S>(
+    state: ResMut<State<S>>,
+    mut next_state: ResMut<NextState<S>>,
+    sync: Res<D>,
+) where
     S: bevy::state::state::FreelyMutableState + Clone,
     D: HasReceiver<S> + HasSender<S> + Resource,
 {
     if state.is_changed() && !state.is_added() {
         sync.tx().send(state.clone()).unwrap();
     }
-
     for event in sync.rx().try_iter() {
-        *state = State::new(event);
+        next_state.set(event);
     }
 }
-
 /// Synchronizes a Bevy query's `.get_single_mut()` with a Leptos signal.
 pub fn sync_query<D, F>(
     duplex: Res<BevyMessageDuplex<Option<D>>>,
