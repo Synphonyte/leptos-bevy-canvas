@@ -1,7 +1,8 @@
 use crate::prelude::{BevyQueryDuplex, QueryDataOwned};
 use crate::systems::*;
 use crate::traits::{HasReceiver, HasSender};
-use bevy::ecs::query::QueryFilter;
+use bevy::ecs::component::Mutable;
+use bevy::ecs::query::{IterQueryData, QueryFilter};
 use bevy::prelude::*;
 
 /// Adds synchronization methods to the Bevy app
@@ -27,7 +28,7 @@ pub trait LeptosBevyApp {
     /// Adds resource syncing between Bevy and Leptos. Takes the Bevy resource receiver/sender as argument.
     fn sync_leptos_signal_with_resource<D, R>(&mut self, bevy_duplex: D) -> &mut Self
     where
-        R: Resource + Clone,
+        R: Resource<Mutability = Mutable> + Clone,
         D: HasReceiver<R> + HasSender<R> + Resource;
 
     /// Adds state syncing between Bevy and Leptos. Takes the Bevy state receiver/sender as argument.
@@ -41,6 +42,7 @@ pub trait LeptosBevyApp {
     fn sync_leptos_signal_with_query<D, F>(&mut self, duplex: BevyQueryDuplex<D, F>) -> &mut Self
     where
         for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
+        for<'a> <D as QueryDataOwned<'a>>::Qdata: IterQueryData,
         F: QueryFilter + 'static;
 }
 
@@ -92,7 +94,7 @@ impl LeptosBevyApp for App {
 
     fn sync_leptos_signal_with_resource<D, R>(&mut self, bevy_duplex: D) -> &mut Self
     where
-        R: Resource + Clone,
+        R: Resource<Mutability = Mutable> + Clone,
         D: HasReceiver<R> + HasSender<R> + Resource,
     {
         for message in bevy_duplex.rx().try_iter() {
@@ -122,6 +124,7 @@ impl LeptosBevyApp for App {
     fn sync_leptos_signal_with_query<D, F>(&mut self, duplex: BevyQueryDuplex<D, F>) -> &mut Self
     where
         for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
+        for<'a> <D as QueryDataOwned<'a>>::Qdata: IterQueryData,
         F: QueryFilter + 'static,
     {
         self.insert_resource(duplex.duplex)

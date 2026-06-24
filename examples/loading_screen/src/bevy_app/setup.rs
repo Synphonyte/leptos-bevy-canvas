@@ -15,7 +15,7 @@ pub fn setup_scene(
     // Light
     commands.spawn((
         PointLight {
-            shadows_enabled: true,
+            shadow_maps_enabled: true,
             intensity: 10_000_000.,
             range: 100.0,
             shadow_depth_bias: 0.2,
@@ -38,7 +38,7 @@ pub fn setup_scene(
         },
         Transform::from_xyz(-0.3, 0.3, 0.2),
         Skybox {
-            image: diffuse_map.clone(),
+            image: Some(diffuse_map.clone()),
             brightness: 500.0,
             rotation: Quat::IDENTITY,
         },

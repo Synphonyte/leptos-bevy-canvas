@@ -1,26 +1,26 @@
 [package]
+edition = "2024"
 name = "unidir_messages"
 version = "0.1.0"
-edition = "2021"
 
 [dependencies]
 bevy-inspector-egui.workspace = true
 console_error_panic_hook.workspace = true
+getrandom.workspace = true
 leptos.workspace = true
 leptos-bevy-canvas.workspace = true
 leptos-use.workspace = true
-meshtext = "0.3.1"
-getrandom.workspace = true
+meshtext = "0.3"
 
 [dependencies.bevy]
-workspace = true
 features = [
-  "bevy_pbr",
-  "bevy_picking",
-  "bevy_window",
-  "bevy_winit",
-  "mesh_picking",
-  "tonemapping_luts",
-  "webgl2",
-  "web",
+    "bevy_pbr",
+    "bevy_picking",
+    "bevy_window",
+    "bevy_winit",
+    "mesh_picking",
+    "tonemapping_luts",
+    "web",
+    "webgl2",
 ]
+workspace = true

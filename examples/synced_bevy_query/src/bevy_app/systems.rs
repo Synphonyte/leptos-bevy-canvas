@@ -13,7 +13,7 @@ pub fn apply_color(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) -> Result<(), BevyError> {
     for (color, material) in &query {
-        if let Some(material) = materials.get_mut(material.0.id()) {
+        if let Some(mut material) = materials.get_mut(material.0.id()) {
             material.base_color = **color;
         }
     }

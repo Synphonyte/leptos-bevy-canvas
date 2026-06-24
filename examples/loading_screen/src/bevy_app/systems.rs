@@ -1,6 +1,6 @@
-use crate::bevy_app::AppState;
 use crate::bevy_app::components::Model;
 use crate::bevy_app::resources::AssetsLoading;
+use crate::bevy_app::AppState;
 use bevy::asset::LoadState;
 use bevy::prelude::*;
 
@@ -48,7 +48,7 @@ pub fn toogle_between_assets(
     assets_loading.insert(next_model_asset_handle.id().into());
 
     commands.spawn((
-        SceneRoot(next_model_asset_handle),
+        WorldAssetRoot(next_model_asset_handle),
         next_model.initial_transform(),
         next_model,
     ));

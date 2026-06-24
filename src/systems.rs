@@ -1,8 +1,9 @@
 use crate::messages::BevyMessageDuplex;
 use crate::prelude::QueryDataOwned;
 use crate::traits::{HasReceiver, HasSender};
+use bevy::ecs::component::Mutable;
 use bevy::ecs::message::MessageId;
-use bevy::ecs::query::QueryFilter;
+use bevy::ecs::query::{IterQueryData, QueryFilter};
 use bevy::prelude::*;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
@@ -67,7 +68,7 @@ pub fn read_and_export_leptos_messages<S, M>(
 /// Takes care of synchronizing a resource between Bevy and a Leptos signal
 pub fn sync_signal_resource<D, R>(mut resource: ResMut<R>, sync: Res<D>)
 where
-    R: Resource + Clone,
+    R: Resource<Mutability = Mutable> + Clone,
     D: HasReceiver<R> + HasSender<R> + Resource,
 {
     if resource.is_changed() && !resource.is_added() {
@@ -103,6 +104,7 @@ pub fn sync_query<D, F>(
     mut prev_some: Local<bool>,
 ) where
     for<'a> D: QueryDataOwned<'a> + Send + Sync + 'static,
+    for<'a> <D as QueryDataOwned<'a>>::Qdata: IterQueryData,
     F: QueryFilter,
 {
     let mut item = query.single_mut().ok();

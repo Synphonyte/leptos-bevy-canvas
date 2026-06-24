@@ -32,7 +32,7 @@ pub fn setup_scene(
     // Light
     commands.spawn((
         PointLight {
-            shadows_enabled: true,
+            shadow_maps_enabled: true,
             intensity: 10_000_000.,
             range: 100.0,
             shadow_depth_bias: 0.2,
@@ -52,7 +52,7 @@ pub fn setup_scene(
             ..default()
         },
         Skybox {
-            image: asset_server.load("environment_maps/pisa_diffuse_rgb9e5_zstd.ktx2"),
+            image: Some(asset_server.load("environment_maps/pisa_diffuse_rgb9e5_zstd.ktx2")),
             brightness: 500.0,
             rotation: Quat::IDENTITY,
         },

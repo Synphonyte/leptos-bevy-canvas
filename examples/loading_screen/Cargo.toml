@@ -1,7 +1,7 @@
 [package]
+edition = "2024"
 name = "loading_screen"
 version = "0.1.0"
-edition = "2024"
 
 [dependencies]
 bevy-inspector-egui.workspace = true
@@ -15,21 +15,22 @@ rand_core.workspace = true
 uuid.workspace = true
 
 [dependencies.bevy]
-workspace = true
 features = [
-  "bevy_pbr",
-  "bevy_window",
-  "bevy_winit",
-  "tonemapping_luts",
-  "webgl2",
-  "bevy_state",
-  "bevy_gltf",
-  "bevy_log",
-  "bevy_image",
-  "bevy_asset",
-  "png",
-  "http",
-  "https",
-  "web",
-  "reflect_auto_register",
+    "bevy_asset",
+    "bevy_gltf",
+    "bevy_image",
+    "bevy_log",
+    "bevy_pbr",
+    "bevy_state",
+    "bevy_window",
+    "bevy_winit",
+    "http",
+    "https",
+    "ktx2",
+    "png",
+    "reflect_auto_register",
+    "tonemapping_luts",
+    "web",
+    "webgl2",
 ]
+workspace = true
