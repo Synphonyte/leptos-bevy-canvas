@@ -4,7 +4,7 @@ use crate::{RENDER_HEIGHT, RENDER_WIDTH};
 use leptos::prelude::Set;
 use leptos::prelude::*;
 use leptos_bevy_canvas::prelude::*;
-use leptos_use::use_debounce_fn;
+use leptos_use_fn_debounce_throttle::use_debounce_fn;
 
 #[derive(Copy, Clone)]
 pub enum MessageDirection {

@@ -166,7 +166,7 @@ fn spawn_letter(
 }
 
 fn on_char_click(
-    on_pointer_press: On<Pointer<Press>>,
+    on_pointer_press: On<PointerPress>,
     index_query: Query<&CharIndex>,
     mut transform_query: Query<&mut Transform>,
     mut message_writer: MessageWriter<ClickMessage>,

@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-11-19
+
+### Breaking Changes 🛠
+
+- Updated dependencies to Bevy 0.20 and Leptos-Use 0.20
+- Leptos-Use 0.20 was split into micro crates, so the `use_raf_fn` re-export on the `leptos_use` umbrella crate is deprecated. This crate now depends on `leptos-use-raf-fn` directly and imports `use_raf_fn` from `leptos_use_raf_fn` instead of `leptos_use`. Downstream code that used `leptos_use::use_raf_fn` should do the same.
+
 ## [0.6.0] - 2026-06-23
 
 ### Breaking Changes 🛠

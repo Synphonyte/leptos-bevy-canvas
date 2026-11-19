@@ -107,7 +107,7 @@ pub fn setup_scene(
 }
 
 pub fn select_on_click(
-    on_click: On<Pointer<Click>>,
+    on_click: On<PointerClick>,
     mut commands: Commands,
     prev_selected: Query<Entity, With<Selected>>,
 ) -> Result<(), BevyError> {

@@ -119,7 +119,7 @@ where
 
     #[cfg(target_arch = "wasm32")]
     {
-        leptos_use::use_raf_fn({
+        leptos_use_raf_fn::use_raf_fn({
             let rx = rx_b2l.clone();
 
             move |_| {

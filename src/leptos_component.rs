@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use leptos::prelude::*;
-use leptos_use::use_raf_fn;
+use leptos_use_raf_fn::use_raf_fn;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, Ordering};
